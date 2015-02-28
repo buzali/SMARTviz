@@ -16,6 +16,12 @@
 #
 import webapp2
 
+import sys
+sys.path.insert(0,'libs')
+
+import foursquare
+
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Hello root!')
