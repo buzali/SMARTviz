@@ -52,6 +52,14 @@ ROOT_URLCONF = 'smart_viz.urls'
 WSGI_APPLICATION = 'smart_viz.wsgi.application'
 
 
+# Database
+# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
