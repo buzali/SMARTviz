@@ -8,4 +8,4 @@ def index(request, ll=None):
     if not ll:
     	ll = '40.761662,-73.96805'
     foursquare = FoursquareEventFetcher.fetch(ll)
-    return HttpResponse(resp)
+    return HttpResponse(foursquare)
