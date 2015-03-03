@@ -13,7 +13,7 @@ def setupTwitter():
        OAUTH_TOKEN_SECRET = 'XjESafpNrnYQoOYlXRsKZJLVY89k3AZYNUmxu2FvMkPCt'
        client_args = { 'verify': False }
        twitter = Twython(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET,client_args=client_args) 
-       print twitter
+       #print twitter
        return twitter
 
  
@@ -25,10 +25,10 @@ def getKey(row,fieldName1 , fieldName2 , fieldName3 ):
 
       
        if fieldName3:
-       	    value = row[fieldName1][fieldName2][fieldName3]
+            value = row[fieldName1][fieldName2][fieldName3]
        elif fieldName2:
-          	value = row[fieldName1][fieldName2]
-       else:   	
+            value = row[fieldName1][fieldName2]
+       else:    
             value = row[fieldName1]
 
        return value
@@ -44,7 +44,7 @@ def searchOnTwitter(twitter,searchQuery):
 
        for row in a["statuses"]:
 
-       	  for key, value in row.iteritems():
+          for key, value in row.iteritems():
              af = ""
              data = {}
           try:
@@ -57,7 +57,7 @@ def searchOnTwitter(twitter,searchQuery):
              media = getKey(row,"entities","media",None)
              imageUrl = ""
              if media:
-             	 imageUrl = getKey(media[0],"media_url_https",None,None)
+                 imageUrl = getKey(media[0],"media_url_https",None,None)
                  print imageUrl
              #imageUrl = getKey(media[0],"media_url_https")
              print url  
@@ -71,14 +71,14 @@ def searchOnTwitter(twitter,searchQuery):
              jsonArray.append(data)
 
           except:
-             print sys.exc_info()[0]         	 
+             print sys.exc_info()[0]             
           coinnn = coinnn + 1
        #print a
        #a = twitter.search(q="@Benton",count=100)
        #print a
        a = ""
        jsss = json.dumps(jsonArray, separators=(',',':'))
-       print jsss
+       #print jsss
        return jsss
 
 def searchOnFacebook(searchQuery):
@@ -91,46 +91,46 @@ def searchOnFacebook(searchQuery):
     coubt = 0
     for row in datay:
         
-    	try:
-    	   	  eventName = getKey(row,"name",None,None)
-    	   	  eventId = getKey(row,"id",None,None)
-    	   	  eventDetails =   graph.request(eventId)  
-    	   	  #print eventDetails
-    	   	  data['title'] = eventName
-    	   	  #data['titleImage'] = profileImage
-    	   	  data['description'] = eventDetails["description"]
-    	   	  data['type'] = 'facebook'
-    	   	  data['link'] = "http://www.facebook.com/events/" + str(eventId)
-    	   	  data['startTime'] = getKey(eventDetails,"start_time",None,None) 
-    	   	  data['endTime'] = getKey(eventDetails,"end_time",None,None) 
-    	   	  
-    	   	  data['photo'] = ""
-    	   	  jsonArray.append(data)
-    	except:
+        try:
+              eventName = getKey(row,"name",None,None)
+              eventId = getKey(row,"id",None,None)
+              eventDetails =   graph.request(eventId)  
+              #print eventDetails
+              data['title'] = eventName
+              #data['titleImage'] = profileImage
+              data['description'] = eventDetails["description"]
+              data['type'] = 'facebook'
+              data['link'] = "http://www.facebook.com/events/" + str(eventId)
+              data['startTime'] = getKey(eventDetails,"start_time",None,None) 
+              data['endTime'] = getKey(eventDetails,"end_time",None,None) 
+              
+              data['photo'] = ""
+              jsonArray.append(data)
+        except:
              print sys.exc_info()[0]    
     jsss = json.dumps(jsonArray, separators=(',',':'))
-    print jsss
+    #print jsss
     return jsss   
 
 def searchInstagram():
-	 jsonArray = []
+     jsonArray = []
 
-	 api = InstagramAPI(client_id='69ae00c802504e0599277ed72265e221', client_secret='7a8bc6124d694a71b482593078999774')
-	 media = api.media_search(lat="40.858844",lng="80")
-	 for row in media:
-	 	data = {}
-	 	data['title'] = row.location.name
-	 	#data['titleImage'] = profileImage
-	 	data['description'] = row.caption.text
-	 	data['type'] = 'instagram'
-	 	data['link'] = row.link
-	 	   	  
-	 	data['photo'] = row.images["standard_resolution"].url
-	 	jsonArray.append(data)
+     api = InstagramAPI(client_id='69ae00c802504e0599277ed72265e221', client_secret='7a8bc6124d694a71b482593078999774')
+     media = api.media_search(lat="40.858844",lng="80")
+     for row in media:
+        data = {}
+        data['title'] = row.location.name
+        #data['titleImage'] = profileImage
+        data['description'] = row.caption.text
+        data['type'] = 'instagram'
+        data['link'] = row.link
+              
+        data['photo'] = row.images["standard_resolution"].url
+        jsonArray.append(data)
     
-	 jsss = json.dumps(jsonArray, separators=(',',':'))
-	 print jsss
-	 return jsss 
+     jsss = json.dumps(jsonArray, separators=(',',':'))
+     #print jsss
+     return jsss 
 
 
 
@@ -140,24 +140,24 @@ def searchInsta2():
      media = api.tag_recent_media(tag_name="apple")
      media = media[0]
      for row in media:
-	 	print row
-	 	data = {}
-	 	data['title'] = row.caption.text
-	 	#data['titleImage'] = profileImage
-	 	data['description'] = row.caption.text
-	 	data['type'] = 'instagram'
-	 	data['link'] = row.link
-	 	   	  
-	 	data['photo'] = row.images["standard_resolution"].url
-	 	jsonArray.append(data)
+        print row
+        data = {}
+        data['title'] = row.caption.text
+        #data['titleImage'] = profileImage
+        data['description'] = row.caption.text
+        data['type'] = 'instagram'
+        data['link'] = row.link
+              
+        data['photo'] = row.images["standard_resolution"].url
+        jsonArray.append(data)
     
      jsss = json.dumps(jsonArray, separators=(',',':'))
-     print jsss
+     #print jsss
      return jsss 
-	 
+     
 
 #twitter = setupTwitter()
 #searchOnTwitter(twitter,"The Porch Pittsburgh")
 #searchOnFacebook("Soup Pittsburgh")
-searchInsta2()
+#searchInsta2()
 
