@@ -5,6 +5,6 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'smart_viz.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
+	url(r'^events/(?P<ll>[-]?\d+\.\d+,[-]?\d+\.\d+)?', 'events.views.index'),
     url(r'^admin/', include(admin.site.urls)),
 )
