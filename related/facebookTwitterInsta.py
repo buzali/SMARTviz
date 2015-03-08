@@ -113,11 +113,12 @@ def searchOnFacebook(searchQuery):
     #print jsss
     return jsss   
 
-def searchInstagram():
+def searchInstagram(lat,lng):
      jsonArray = []
 
      api = InstagramAPI(client_id='69ae00c802504e0599277ed72265e221', client_secret='7a8bc6124d694a71b482593078999774')
-     media = api.media_search(lat="40.858844",lng="80")
+     #media = api.media_search(lat="40.858844",lng="80")
+     media = api.media_search(lat=lat,lng=lng)
      for row in media:
         data = {}
         data['title'] = row.location.name
@@ -135,10 +136,10 @@ def searchInstagram():
 
 
 
-def searchInsta2():
+def searchInsta2(searchQuery):
      jsonArray = []
      api = InstagramAPI(client_id='69ae00c802504e0599277ed72265e221', client_secret='7a8bc6124d694a71b482593078999774')
-     media = api.tag_recent_media(tag_name="apple")
+     media = api.tag_recent_media(tag_name=searchQuery)
      media = media[0]
      for row in media:
         print row
@@ -164,6 +165,7 @@ def findPlaces(lat,longy,type,searchTerm):
       arr = places.read()
       results = json.loads(arr)
       actualResults = results["results"]
+      jsss = ""
       for row in actualResults:
           data = {}
           name = row["name"]
