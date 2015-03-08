@@ -4,6 +4,7 @@ Django==1.7.5
 django-toolbelt==0.0.1
 Facebook==0.0
 foursquare==2015.2.1
+eventbrite==3.0.3
 gunicorn==19.2.1
 httplib2==0.9
 oauthlib==0.7.2
