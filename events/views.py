@@ -9,7 +9,8 @@ def index(request, ll=None):
     	ll = '40.761662,-73.96805'
     foursquare = FoursquareEventFetcher.fetch(ll)
     meetups = MeetupsEventFetcher.fetch(ll)
+    songkick = SongkickEventFetcher.fetch(ll)
     all_events = []
-    all_events = foursquare + meetups
+    all_events = foursquare + meetups + songkick
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
