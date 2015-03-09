@@ -1,6 +1,6 @@
 venv
 *.pyc
-_creds
+_creds.py
 staticfiles
 # Byte-compiled / optimized / DLL files
 __pycache__/
