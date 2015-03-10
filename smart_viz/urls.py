@@ -9,5 +9,5 @@ urlpatterns = patterns('',
 	url(r'^events/(?P<ll>[-]?\d+\.\d+,[-]?\d+\.\d+)?', 'events.views.index'),
 	url(r'^related/', 'related.views.index'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', TemplateView.as_view(template_name='test.html')),
+    url(r'^$', 'smartviz.views.index'),
 )
