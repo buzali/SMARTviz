@@ -2,6 +2,37 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from facebookTwitterInsta import *
 
+
+def facebook(request,searchQuery):
+    print "facebook"
+    print searchQuery
+    resp = searchOnFacebook(searchQuery)
+    return HttpResponse(resp)
+
+def twitter(request,searchQuery):
+    print "twitter"
+    twitter = setupTwitter()
+    resp = searchOnTwitter(twitter,searchQuery)
+    return HttpResponse(resp)
+
+def instagram(request,searchQuery):
+    print "instagram"
+    resp = searchInsta2(searchQuery)
+    return HttpResponse(resp)
+
+def instaloco(request,lat,lng):
+    print "instaloco"
+    resp = searchInstagram(lat,lng)    
+    return HttpResponse(resp)
+
+
+def places(request,lat,lng,typey,searchTerm=""):
+    print "places"
+    resp = findPlaces(lat,lng,typey,searchTerm)
+    return HttpResponse(resp)
+
+
+
 def index(request,ll=None):
     if request.method == 'GET':
     	namepath = request.path
