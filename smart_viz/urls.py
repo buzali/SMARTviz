@@ -8,5 +8,5 @@ urlpatterns = patterns('',
 	url(r'^events/(?P<ll>[-]?\d+\.\d+,[-]?\d+\.\d+)?', 'events.views.index'),
 	url(r'^related/', 'related.views.index'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'smart_viz.views.index'),
+    url(r'^$', 'app.views.index'),
 )
