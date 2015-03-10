@@ -85,7 +85,7 @@ def searchOnTwitter(twitter,searchQuery):
 def searchOnFacebook(searchQuery):
     jsonArray = []
 
-    graph = facebook.GraphAPI("CAAWDfEKywTYBADMW2ZC6Qpuj8v2ZCx9eJq6H0ZCXa1H0Xyjs7o7lkQU2u41f4hHdOxuZBZCvEZBjqmyamzy97HOdG9vYydDE5ckU81dYX6lICFu6DG1SjtvNJbDU3wE3JDIDnA51a8xWZCmGRqVpkWNzh2e9LZCzpKm2GUrysNbmlWNnqJ70csddz3MT0XzZAa1eMD5YIAKdD2jZAZCtsPZAX0ozIB4xFLZAtgyHrDnP0w1MbpAZDZD")
+    graph = facebook.GraphAPI("CAAWDfEKywTYBAPGbvJQPQQcaqGJdhdZBdhXxKjgTNZCgpEDUDKJdIMm8a0litcxjEY4pdn1ZCyR3lnlwIGbnECdIoVyYVepbKnwurgtLdIQ03t6IHOVrpQQRFgDt15iWy4VRzIk12JqsULDP4yP843I3UKmBG9P0APm12klVPIoPJtE70eFZBoqY1x1CejwZD")
     response = graph.request('search', args={'q': searchQuery, 'type': 'event'})
     datay = response["data"]
     data = {}
