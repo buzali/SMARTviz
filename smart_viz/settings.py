@@ -102,5 +102,5 @@ STATICFILES_DIRS = (
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
-    PROJECT_PATH + '../smartviz/templates/',
+    PROJECT_PATH + '/../smartviz/templates/',
 )
