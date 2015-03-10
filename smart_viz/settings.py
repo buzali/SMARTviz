@@ -47,10 +47,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-TEMPLATE_DIRS = (
-    os.path.join(SETTINGS_PATH, 'templates'),
-)
-
 ROOT_URLCONF = 'smart_viz.urls'
 
 WSGI_APPLICATION = 'smart_viz.wsgi.application'
