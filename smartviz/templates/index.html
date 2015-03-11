@@ -63,6 +63,7 @@
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
 			  $scope.map = { center: { latitude: 40.7789366593, longitude: -73.9622982001 }, zoom: 8 };
+			  $scope.events = [];
 	          $(".angular-google-map-container").height($(window).height());
 		        
 			    var httpRequest = $http({
