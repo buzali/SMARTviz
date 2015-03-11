@@ -1,0 +1,244 @@
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6em;
+    margin: 0;
+
+    background: url("../assets/google-map.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.main-sidebar {
+    width: 25%;
+    float: left;
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
+}
+
+.main-sidebar h4 {
+    padding: 12px 10px 9px;
+    font-size: 0.8em;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #111;
+    background: #ecc64b;
+    background: rgba(236,198,75,0.9);
+    text-transform: uppercase;
+}
+
+.events-nearby-container {
+    padding: 11px 10px 7px;
+}
+
+div.events-nearby-container:hover {
+    background: #303030;
+    cursor: pointer;
+}
+
+.events-nearby-container:nth-child(odd) {
+    background: #3c3c3c;
+    background: rgba(60,60,60,0.95);
+}
+
+.events-nearby-container:nth-child(even) {
+    background: #444;
+    background: rgba(68,68,68,0.95);
+}
+
+.events-nearby-container .event-details {
+    width: 90%;
+    float: left;
+    line-height: 1em;
+}
+
+.events-nearby-container .event-name {
+    color: #f0f0f0;
+    font-size: 0.93em;
+}
+
+.events-nearby-container .event-date-time {
+    font-size: 0.8em;
+    font-style: italic;
+    margin-top: 0.2em;
+    color: #909090;
+}
+
+.events-nearby-container .event-time {
+    padding-right: 0.8em;
+}
+
+.events-nearby-container .glyphicon {
+    width: 10%;
+    float: right;
+    color: #aaa;
+}
+
+.restaurants-nearby-container {
+    padding: 7px 10px 4px;
+}
+
+div.restaurants-nearby-container:hover {
+    background: #303030;
+    cursor: pointer;
+}
+
+
+.restaurants-nearby-container:nth-child(odd) {
+    background: #3c3c3c;
+    background: rgba(60,60,60,0.95);
+}
+
+.restaurants-nearby-container:nth-child(even) {
+    background: #444;
+    background: rgba(68,68,68,0.95);
+}
+
+.restaurants-nearby-container .restaurant-name {
+    color: #eee;
+    font-size: 0.93em;
+    width: 90%;
+    float: left;
+}
+
+.restaurants-nearby-container .glyphicon {
+    width: 10%;
+    float: right;
+    color: #aaa;
+}
+
+.event-sidebar {
+    width: 25%;
+    float: left;
+    color: #eee;
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.1);
+}
+
+.back-button {
+    float: right;
+    color: #444;
+    cursor: pointer;
+    line-height: 0.7em;
+}
+
+.event-title {
+    padding: 12px 10px 9px;
+    font-size: 0.8em;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #111;
+    background: #80cbc4;
+    background: rgba(128,203,196,0.9);
+    text-transform: uppercase;
+}
+
+.event-image {
+    float: left;
+    width: 29%;
+}
+
+.event-description {
+    background: #444;
+    background: rgba(68,68,68,0.95);
+}
+
+.event-details-container {
+    font-size: 0.8em;
+    line-height: 1.4em;
+    padding: 3px 10px 0px;
+    float: right;
+    width: 71%;
+}
+
+.event-details-container span {
+    color: #999;
+    font-style: italic;
+    padding-right: 5px;
+}
+
+.event-details-container div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.event-tweets h4 {
+    padding: 12px 10px 9px;
+    font-size: 0.8em;
+    margin-top: 0;
+    margin-bottom: 0;
+    background: #80cbc4;
+    background: rgba(128,203,196,0.9);
+    text-transform: uppercase;
+    color: #111;
+}
+
+.view-more a {
+    text-transform: none;
+    color: #333;
+    float: right;
+}
+
+.event-tweets div {
+    padding: 8px 10px 5px;
+    font-size: 0.85em;
+    line-height: 1.4em;
+}
+
+.event-tweets div:nth-child(odd) {
+    background: #3c3c3c;
+    background: rgba(60,60,60,0.95);
+}
+
+.event-tweets div:nth-child(even) {
+    background: #444;
+    background: rgba(68,68,68,0.95);
+}
+
+.event-instagram h4 {
+    padding: 12px 10px 9px;
+    font-size: 0.8em;
+    margin-top: 0;
+    margin-bottom: 0;
+    background: #80cbc4;
+    background: rgba(128,203,196,0.9);
+    text-transform: uppercase;
+    color: #111;
+}
+
+.event-instagram .image-container {
+    width: 25%;
+    height: 25%;
+    overflow: hidden;
+    float: left;
+}
+
+#search-form {
+    padding-bottom: 3px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#search-form input[type="text"] {
+    border-radius: 0;
+    border: 0;
+    width: 85%;
+    float: left;
+}
+
+#search-form button {
+    border-radius: 0;
+    border: 0;
+    width: 15%;
+    padding: 7px 5px 5px;
+}
+
+.map-container {
+    /*background: url("../assets/google-map.png");*/
+}
+
