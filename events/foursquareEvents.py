@@ -12,10 +12,11 @@ from songkick import Songkick
 
 class Event(object):
 
-    def __init__(self, name, location, url, photo):
+    def __init__(self, name, lat, lng, url, photo):
         self.type = 'Generic'
         self.name = name
-        self.location = location
+        self.lat = lat
+        self.lng = lng
         self.url = url
         self.photo = photo
     def __repr__(self):
@@ -31,10 +32,11 @@ class FoursquareEvent(Event):
 
     def __init__(self, obj):
         name = obj['name']
-        location = "%s,%s" %(obj['location']['lat'],obj['location']['lng'])
+        lat = obj['location']['lat']
+        lng = obj['location']['lng']
         url = obj.get('shortUrl')
         photo = obj.get('photos')
-        super(FoursquareEvent, self).__init__(name, location, url, photo) 
+        super(FoursquareEvent, self).__init__(name, lat,lng, url, photo) 
         self.type = 'Foursquare'
 
 class FoursquareEventFetcher(object):
@@ -97,12 +99,13 @@ class MeetupsEvent(Event):
 
     def __init__(self, obj):
         name = obj['name']
-        location = None
+        lat=lng = None
         if obj.get('venue'):
-            location = "%s,%s" %(obj['venue']['lat'],obj['venue']['lon'])
+            lat = obj['venue']['lat']
+            lng = obj['venue']['lon']
         url = obj.get('event_url')
         photo = obj.get('photo_url')
-        super(MeetupsEvent, self).__init__(name, location, url, photo) 
+        super(MeetupsEvent, self).__init__(name, lat, lng, url, photo) 
         # self.description = obj.get('description')
         self.time = obj.get('time')
         self.type = 'Meetups'
@@ -133,7 +136,7 @@ class MeetupsEventFetcher(object):
 class SongkickEvent(Event):
 
     def __init__(self, obj):
-        super(SongkickEvent, self).__init__(obj.get('name'), obj.get('location'), obj.get('url'), None) 
+        super(SongkickEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
         self.type = 'Songkick'
         self.venue = obj['venue']
 
@@ -145,7 +148,8 @@ class SongkickEventFetcher(object):
         sk = Songkick('vYtwu69WMoO13X3H')
         events = sk.events.query(location='geo:40.4428285,-79.9561175', per_page=10, min_date=date.today(), max_date=date.today())
 
-        events_dict = [{'location': str(event.location.latitude) + ',' + str(event.location.longitude),
+        events_dict = [{'lat': str(event.location.latitude),
+            'lng':event.location.longitude,
             'name': event.display_name,
             'url': event.uri,
             'venue': event.venue.display_name
@@ -154,6 +158,7 @@ class SongkickEventFetcher(object):
         events = [SongkickEvent(e) for e in events_dict]
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
+
 
 
 
