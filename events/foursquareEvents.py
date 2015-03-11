@@ -146,8 +146,8 @@ class SongkickEventFetcher(object):
         lat = loc.split(',')[0]
         lng = loc.split(',')[1]
         sk = Songkick('vYtwu69WMoO13X3H')
-        events = sk.events.query(location='geo:40.4428285,-79.9561175', per_page=10, min_date=date.today(), max_date=date.today())
-
+        loc = '{0},{1}'.format(lat,lng)
+        events = sk.events.query(location='geo:' + loc, per_page=10, min_date=date.today(), max_date=date.today())
         events_dict = [{'lat': str(event.location.latitude),
             'lng':event.location.longitude,
             'name': event.display_name,
