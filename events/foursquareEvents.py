@@ -15,8 +15,8 @@ class Event(object):
     def __init__(self, name, lat, lng, url, photo):
         self.type = 'Generic'
         self.name = name
-        self.lat = lat
-        self.lng = lng
+        self.latitude = lat
+        self.longitude = lng
         self.url = url
         self.photo = photo
     def __repr__(self):

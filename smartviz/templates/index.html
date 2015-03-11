@@ -17,14 +17,13 @@
 			<div>
 			  <md-content>
 			    <md-list>
-			      <md-item ng-repeat="item in todos">
+			      <md-item ng-repeat="item in twitter">
 			        <md-item-content>
 			          <div class="md-tile-left">
-				          <div class="image" style="background-image:url({{item.titleImage}})"></div>
+				          <div class="image" ng-style="{'background-image':'url('+item.titleImage+')'}"></div>
 			          </div>
 			          <div class="md-tile-content">
-			            <h3>{{item.type}}</h3>
-			            <h4>{{item.title}}</h4>
+			            <h3>{{item.title}}</h3>
 			            <p>
 			              {{item.description}}
 			            </p>
@@ -38,7 +37,13 @@
 	      </md-content>
 	    </md-sidenav>
 	    <md-content flex>
-				<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+				<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+					<ui-gmap-markers models="events" coords="'self'" icon="'icon'">
+						<ui-gmap-windows show="show">
+			                <div ng-non-bindable>{{name}}</div>
+			            </ui-gmap-windows>
+					</ui-gmap-markers>
+				</ui-gmap-google-map>
 		</md-content>
 		</section>
 		{% endverbatim %}
@@ -57,7 +62,8 @@
     	<script>
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
-			  $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+			  $scope.map = { center: { latitude: 40.7789366593, longitude: -73.9622982001 }, zoom: 8 };
+			  $scope.events = [];
 	          $(".angular-google-map-container").height($(window).height());
 		        
 			    var httpRequest = $http({
@@ -65,7 +71,18 @@
 		            url: '/related/twitter/soup%20kitchen',
 		
 		        }).success(function(data, status) {
-		            $scope.todos = data;
+		            $scope.twitter = data;
+		        });
+		        
+			    var httpRequest = $http({
+		            method: 'GET',
+		            url: '/events/40.7789366593,-73.9622982001',
+		
+		        }).success(function(data, status) {
+			        for (i = 0; i < data.length; i++) { 
+					    data[i].id = i;
+					}
+		            $scope.events = data;
 		        });
 			})
 			.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
