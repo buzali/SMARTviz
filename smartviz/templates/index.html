@@ -39,6 +39,9 @@
 	    <md-content flex>
 				<ui-gmap-google-map center='map.center' zoom='map.zoom'>
 					<ui-gmap-markers models="events" coords="'self'" icon="'icon'">
+						<ui-gmap-windows show="show">
+			                <div ng-non-bindable>{{name}}</div>
+			            </ui-gmap-windows>
 					</ui-gmap-markers>
 				</ui-gmap-google-map>
 		</md-content>
@@ -59,7 +62,7 @@
     	<script>
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
-			  $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+			  $scope.map = { center: { latitude: 40.7789366593, longitude: -73.9622982001 }, zoom: 8 };
 	          $(".angular-google-map-container").height($(window).height());
 		        
 			    var httpRequest = $http({
