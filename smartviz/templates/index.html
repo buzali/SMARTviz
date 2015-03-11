@@ -20,7 +20,7 @@
 			      <md-item ng-repeat="item in twitter">
 			        <md-item-content>
 			          <div class="md-tile-left">
-				          <div class="image" style="background-image:url({{item.titleImage}})"></div>
+				          <div class="image" ng-style="background-image:url({{item.titleImage}})"></div>
 			          </div>
 			          <div class="md-tile-content">
 			            <h3>{{item.type}}</h3>
@@ -76,6 +76,9 @@
 		            url: '/events/40.7789366593,-73.9622982001',
 		
 		        }).success(function(data, status) {
+			        for (i = 0; i < data.length; i++) { 
+					    data.id = i;
+					}
 		            $scope.events = data;
 		        });
 			})
