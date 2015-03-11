@@ -17,7 +17,7 @@
 			<div>
 			  <md-content>
 			    <md-list>
-			      <md-item ng-repeat="item in todos">
+			      <md-item ng-repeat="item in twitter">
 			        <md-item-content>
 			          <div class="md-tile-left">
 				          <div class="image" style="background-image:url({{item.titleImage}})"></div>
@@ -38,7 +38,10 @@
 	      </md-content>
 	    </md-sidenav>
 	    <md-content flex>
-				<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+				<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+					<ui-gmap-markers models="events" coords="'self'" icon="'icon'">
+					</ui-gmap-markers>
+				</ui-gmap-google-map>
 		</md-content>
 		</section>
 		{% endverbatim %}
@@ -65,7 +68,15 @@
 		            url: '/related/twitter/soup%20kitchen',
 		
 		        }).success(function(data, status) {
-		            $scope.todos = data;
+		            $scope.twitter = data;
+		        });
+		        
+			    var httpRequest = $http({
+		            method: 'GET',
+		            url: '/events/40.7789366593,-73.9622982001',
+		
+		        }).success(function(data, status) {
+		            $scope.events = data;
 		        });
 			})
 			.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
