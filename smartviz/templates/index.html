@@ -12,7 +12,7 @@
 	      <md-toolbar class="md-theme-indigo" style="min-height:100px;">
 	        <h1 class="md-toolbar-tools" style="height:100px;max-height: 100px;">
 		        
-		        <md-content md-theme="docs-dark" class="md-padding" layout="column" layout-sm="column" style="font-size:1em">
+		        <md-content md-theme="docs-dark" class="" layout="column" layout-sm="column" style="font-size:1em">
 			    <md-input-container style="padding: 2px 2px 8px;">
 			      <label>City</label>
 			      <input type="text" ng-autocomplete ng-model="result" details="details" options="options" placeholder=""/>
@@ -21,25 +21,28 @@
 		        
 	        </h1>
 	      </md-toolbar>
-	      <md-content class="md-padding" ng-controller="LeftCtrl">
+	      <md-content ng-controller="LeftCtrl">
 	        
 			<div layout="column" flex layout-fill>
 			  <md-content>
 			  <section ng-repeat="feed in events">
-			  	<md-subheader class="md-primary">{{feed.name}}</md-subheader>
+			  	<md-subheader class="md-primary md-padding">{{feed.name}}</md-subheader>
 			    <md-list>
 			      <md-item ng-repeat="item in feed.data">
+			      	<md-button>
 			        <md-item-content>
 			          <!--<div class="md-tile-left">
 				          <div class="image" ng-style="{'background-image':'url('+item.titleImage+')'}"></div>
 			          </div>-->
 			          <div class="md-tile-content">
-			            <p>{{item.name}}</p>
+			            <h3><strong>{{item.name}}</strong></h3>
+			            <p>{{item.address}}</p>
 			            <!--<p>
 			              {{item.description}}
 			            </p>-->
 			          </div>
 			        </md-item-content>
+			      </md-button>
 			      </md-item>
 			    </md-list>
 			  </section>
@@ -193,6 +196,16 @@
 			md-input-container.md-docs-dark-theme .md-input {
 				color: rgba(255,255,255,1.0);
 				border-color: rgba(255,255,255,0.12);
+			}
+			
+			md-item .md-button {
+				text-align: left;
+				width:100%;
+				white-space: normal;
+				padding:0;
+				text-transform: none;
+				font-weight: inherit;
+				
 			}
 			
 			input::-webkit-input-placeholder { color:transparent; }
