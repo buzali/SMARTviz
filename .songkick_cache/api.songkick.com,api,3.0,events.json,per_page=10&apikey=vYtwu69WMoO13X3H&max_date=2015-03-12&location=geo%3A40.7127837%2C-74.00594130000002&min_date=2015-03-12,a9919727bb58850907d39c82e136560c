@@ -1,12 +1,12 @@
 status: 200
 content-length: 16943
 content-location: http://api.songkick.com/api/3.0/events.json?per_page=10&apikey=vYtwu69WMoO13X3H&max_date=2015-03-12&location=geo%3A40.7127837%2C-74.00594130000002&min_date=2015-03-12
-expires: Thu, 12 Mar 2015 20:20:52 GMT
+expires: Thu, 12 Mar 2015 21:54:36 GMT
 vary: Accept-Encoding
 connection: close
 -content-encoding: gzip
 cache-control: private, max-age=3600
-date: Thu, 12 Mar 2015 19:20:52 GMT
+date: Thu, 12 Mar 2015 20:54:36 GMT
 content-type: application/json; charset=utf-8
 -varied-accept-encoding: gzip, deflate
 
