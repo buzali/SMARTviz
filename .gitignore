@@ -1,6 +1,7 @@
 venv
 *.pyc
 _creds.py
+.songkick_cache/
 staticfiles
 # Byte-compiled / optimized / DLL files
 __pycache__/
