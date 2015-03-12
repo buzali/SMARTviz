@@ -48,10 +48,10 @@
 	    </md-sidenav>
 	    <md-content flex>
 				<ui-gmap-google-map center='map.center' zoom='map.zoom'>
-					<ui-gmap-markers models="events" coords="'self'" icon="'icon'">
-						<ui-gmap-windows show="show">
-			                <div ng-non-bindable>{{name}}</div>
-			            </ui-gmap-windows>
+				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
+		            <div>{{map.window.model.name}}</div>
+		        </ui-gmap-window>
+					<ui-gmap-markers models="events" coords="'self'" icon="'icon'" events="map.markersEvents">
 					</ui-gmap-markers>
 				</ui-gmap-google-map>
 		</md-content>
@@ -72,7 +72,28 @@
     	<script>
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
-			  $scope.map = { center: { latitude: 37.09024, longitude: -95.712891 }, zoom: 4 };
+			  $scope.map = {
+				  center: {
+					  latitude: 37.09024,
+					  longitude: -95.712891
+				  },
+				  markers: [], 
+				  zoom: 4,
+				  markersEvents: {
+		            click: function(marker, eventName, model, arguments) {
+		                $scope.map.window.model = model;
+		                $scope.map.window.show = true;
+		            }
+		        },
+		        window: {
+		            marker: {},
+		            show: false,
+		            closeClick: function() {
+		                this.show = false;
+		            },
+		            options: {pixelOffset: new google.maps.Size(0, -40)} 
+		        }
+			  };
 			  $scope.events = [];
 			  $scope.city = "New York";
 			  
@@ -92,13 +113,13 @@
 		            $scope.twitter = data;
 		        });*/
 		        
-		        
 		        $scope.$watch("details", function(newValue, oldValue) {
 				    if (newValue) {
 					    var lng = newValue.geometry.location.D;
 					    var lat = newValue.geometry.location.k;
 					    
-						$scope.map = { center: { latitude: lat, longitude: lng }, zoom: 10 };
+						$scope.map.center = { latitude: lat, longitude: lng };
+						$scope.map.zoom = 10;
 					    console.log(newValue);
 					    console.log(lat);
 					    console.log(lng)
