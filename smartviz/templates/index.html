@@ -8,26 +8,29 @@
 	<body ng-controller="AppCtrl" layout="column">
 		{% verbatim %}
 		<section layout="row" flex>
-	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true">
-	      <md-toolbar class="md-theme-indigo" style="min-height:100px;">
+	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true" flex="30">
+	      <md-toolbar class="md-theme-indigo" style="min-height:148px;">
 	        <h1 class="md-toolbar-tools" style="height:100px;max-height: 100px;">
 		        
-		        <md-content md-theme="docs-dark" class="" layout="column" layout-sm="column" style="font-size:1em">
-			    <md-input-container style="padding: 2px 2px 8px;">
+		        <md-content md-theme="docs-dark"  layout="column" layout-sm="column" style="font-size:1em;width:100%">
+			    <md-input-container style="padding: 2px 2px 8px;" style="width:100%">
 			      <label>City</label>
 			      <input type="text" ng-autocomplete ng-model="result" details="details" options="options" placeholder=""/>
 			    </md-input-container>
 			  </md-content>
 		        
 	        </h1>
+	        <md-tabs md-selected="data.selectedIndex" style="background:white;min-height:48px;">
+			    <md-tab ng-repeat="feed in events" label="{{feed.name}}" style="font-size:.9em;">
+		    </md-tabs>
 	      </md-toolbar>
 	      <md-content ng-controller="LeftCtrl">
 	        
 			<div layout="column" flex layout-fill>
-			  <md-content>
-			  <section ng-repeat="feed in events">
-			  	<md-subheader class="md-primary md-padding">{{feed.name}}</md-subheader>
-			    <md-list>
+			<div ng-repeat="feed in events">
+			    <div role="tabpanel" ng-if="$index == data.selectedIndex">
+			    <div class="demo-tab feed{{$index%4}}" layout="column">
+			        <md-list>
 			      <md-item ng-repeat="item in feed.data">
 			      	<md-button>
 			        <md-item-content>
@@ -45,8 +48,10 @@
 			      </md-button>
 			      </md-item>
 			    </md-list>
-			  </section>
-			  </md-content>
+			      </div>
+			    </div>
+				</ng-switch>
+			</div>
 			</div>
 	      </md-content>
 	    </md-sidenav>
@@ -76,6 +81,13 @@
     	<script>
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
+			  
+			  $scope.data = {
+			      selectedIndex : 0,
+			      secondLocked : true,
+			      secondLabel : "Item Two"
+			    };
+			  
 			  $scope.map = {
 				  center: {
 					  latitude: 37.09024,
