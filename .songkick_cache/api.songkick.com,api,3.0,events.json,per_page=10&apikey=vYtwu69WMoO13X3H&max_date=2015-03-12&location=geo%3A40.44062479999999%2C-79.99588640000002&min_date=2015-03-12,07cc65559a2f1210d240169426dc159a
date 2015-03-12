@@ -1,0 +1,13 @@
+status: 200
+content-length: 167
+content-location: http://api.songkick.com/api/3.0/events.json?per_page=10&apikey=vYtwu69WMoO13X3H&max_date=2015-03-12&location=geo%3A40.44062479999999%2C-79.99588640000002&min_date=2015-03-12
+expires: Thu, 12 Mar 2015 22:06:02 GMT
+vary: Accept-Encoding
+connection: close
+-content-encoding: gzip
+cache-control: private, max-age=3600
+date: Thu, 12 Mar 2015 21:06:02 GMT
+content-type: application/json; charset=utf-8
+-varied-accept-encoding: gzip, deflate
+
+{"resultsPage":{"status":"ok","results":{},"perPage":10,"page":1,"totalEntries":0,"clientLocation":{"ip":null,"lat":40.4406248,"lng":-79.9958864,"metroAreaId":33965}}}
