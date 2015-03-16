@@ -171,10 +171,12 @@ def findPlaces(lat,longy,type,searchTerm):
           name = row["name"]
           lat = row["geometry"]["location"]["lat"]
           longy = row["geometry"]["location"]["lng"]
+          rating = getKey(row,"rating",None,None)
           openNow = getKey(row,"opening_hours","open_now",None)
           stry = str(name) + " " + str(lat) + " " + str(longy) + " " + str(openNow)
           #print stry
           data['name'] = name
+          data['rating']  = str(rating)
           #data['titleImage'] = profileImage
           data['latitude'] = lat
           data['longitude'] = longy
