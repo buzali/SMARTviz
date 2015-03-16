@@ -104,7 +104,7 @@ class MeetupsEvent(Event):
         if obj.get('venue'):
             lat = obj['venue']['lat']
             lng = obj['venue']['lon']
-            self.address = "{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
+            self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
         url = obj.get('event_url')
         photo = obj.get('photo_url')
         super(MeetupsEvent, self).__init__(name, lat, lng, url, photo) 
