@@ -176,8 +176,8 @@ def findPlaces(lat,longy,type,searchTerm):
           #print stry
           data['name'] = name
           #data['titleImage'] = profileImage
-          data['lat'] = lat
-          data['lng'] = longy
+          data['latitude'] = lat
+          data['longitude'] = longy
           data['type'] = 'places'
           data['openNow'] = openNow
           jsonArray.append(data)

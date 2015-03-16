@@ -14,16 +14,16 @@
 			<md-content md-theme="docs-dark" class="md-padding" style="min-height:48px;max-height:48;overflow: hidden;">
 	        <ng-switch on="data.selectedScreen" class="tabpanel-container">
 				<div role="tabpanel" ng-switch-when="0">
-			        <center>Search your city</center>
+			        <center>1) Search your city</center>
 			    </div>
 				<div role="tabpanel" ng-switch-when="1">
-			        <center>Select an event</center>
+			        <center>2) Select an event</center>
 			    </div>
 				<div role="tabpanel" ng-switch-when="2">
 			        <a class="md-accent" ng-click="data.back()" style="margin-top:-2; margin-bottom:-3px;float:left;">
 				        <i class="fa fa-chevron-left md-accent" style="font-size:.9em;"></i>
 					</a>
-			        <center>See what's going on</center>
+			        <center>3) See what's going on nearby</center>
 			    </div>
 		    </ng-switch>
 			</md-content>
@@ -78,32 +78,64 @@
 						<p>{{selected.address}}</p>
 					</md-content>
 					<md-divider></md-divider>
-				
-	        <ng-switch on="data.loading" class="tabpanel-container">
-				<div role="tabpanel" ng-switch-when="0">
-					<div layout="row" layout-sm="column" layout-align="space-around" style="margin:50px;">
-				      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+			
+			<md-tabs md-selected="selectedIndex" flex>
+		    <md-tab label="Food">
+			    <ng-switch on="places.loading" class="tabpanel-container">
+					<div role="tabpanel" ng-switch-when="0">
+						<div layout="row" layout-sm="column" layout-align="space-around" style="margin:50px;">
+					      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					    </div>
 				    </div>
-			    </div>
-				<div role="tabpanel" ng-switch-when="1" style="margin:50px;">
-			        <center>We couldn't find any tweets :(</center>
-			    </div>
-				<div role="tabpanel" ng-switch-when="2">
-					<md-list class="md-padding">
-						<md-item ng-repeat="item in twitter">
-					        <md-item-content>
-					          <div class="md-tile-left">
-					              <div ng-style="{'background-image':'url('+item.photo+')'}" class="image"></div>
-					          </div>
-						        <div class="md-tile-content">
-							        <h3><strong>{{item.title}}</strong></h3>
-							        <p>{{item.description}}</p>
-						        </div>
-					        </md-item-content>
-						</md-item>
-					</md-list>
-			    </div>
-		    </ng-switch>	
+					<div role="tabpanel" ng-switch-when="1" style="margin:50px;">
+				        <center>We couldn't find any restaurants :(</center>
+				    </div>
+					<div role="tabpanel" ng-switch-when="2">
+						<md-list class="md-padding">
+							<md-item ng-repeat="item in places.data">
+								<md-button ng-click="data.selectPlace(item)">
+							        <md-item-content>
+								        <div class="md-tile-content">
+									        <h3><strong>{{item.name}}</strong></h3>
+								        </div>
+							        </md-item-content>
+								</md-button>
+							</md-item>
+						</md-list>
+				    </div>
+			    </ng-switch>
+		    </md-tab>
+		    <md-tab label="Twitter">
+			    <ng-switch on="twitter.loading" class="tabpanel-container">
+					<div role="tabpanel" ng-switch-when="0">
+						<div layout="row" layout-sm="column" layout-align="space-around" style="margin:50px;">
+					      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					    </div>
+				    </div>
+					<div role="tabpanel" ng-switch-when="1" style="margin:50px;">
+				        <center>We couldn't find any tweets :(</center>
+				    </div>
+					<div role="tabpanel" ng-switch-when="2">
+						<md-list class="md-padding">
+							<md-item ng-repeat="item in twitter.data">
+						        <md-item-content>
+						          <div class="md-tile-left">
+						              <div ng-style="{'background-image':'url('+item.photo+')'}" class="image"></div>
+						          </div>
+								<md-button>
+							        <div class="md-tile-content">
+								        <h3><strong>{{item.title}}</strong></h3>
+								        <p>{{item.description}}</p>
+							        </div>
+								</md-button>
+						        </md-item-content>
+							</md-item>
+						</md-list>
+				    </div>
+			    </ng-switch>
+		    </md-tab>
+		  </md-tabs>	
+	        	
 					
 			</div>
 	      </md-content>
@@ -113,8 +145,7 @@
 				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
 		            <div>{{map.window.model.name}}</div>
 		        </ui-gmap-window>
-					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents"
-					 doCluster="true">
+					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents"><!-- doCluster="true"> -->
 					</ui-gmap-markers>
 				</ui-gmap-google-map>
 		</md-content>
@@ -144,32 +175,59 @@
 				  address: ""
 			  }
 			  
+			  $scope.twitter = {loading: 0, data: []};
+			  $scope.places = {loading: 0, data: []};
+			  
 			  $scope.data = {
 			      selectedIndex : 0,
 			      selectedScreen: 0,
-			      loading: 0,
+			      selectPlace: function(item) {
+	                  $scope.map.window.model = item;
+	                  $scope.map.window.show = true;
+					  $scope.map.center = { latitude: item.latitude, longitude: item.longitude };
+			      },
 			      selectEvent: function(item) {
 				      $scope.data.selectedScreen = 2;
 				      $scope.selected.name = item.name;
 				      $scope.selected.address = item.address;
+				      
+	                  $scope.map.window.model = item;
+	                  $scope.map.window.show = true;
 				      
 				      oldcenter = $scope.map.center;
 				      oldmap = $scope.mapEvents;
 					  $scope.map.center = { latitude: item.latitude, longitude: item.longitude };
 				      $scope.map.zoom = 17;
 				      $scope.mapEvents = [item];
-				      $scope.data.loading = 0;
+				      $scope.twitter.loading = 0;
+				      $scope.places.loading = 0;
 				      
 				      var httpRequest = $http({
 				            method: 'GET',
 				            url: '/related/twitter/'+item.name,
 				
 				        }).success(function(data, status) {
-					        $scope.twitter = data
+					        $scope.twitter.data = data
 					        if(data.length > 0)
-					        	$scope.data.loading = 2;
+					        	$scope.twitter.loading = 2;
 					        else
-								$scope.data.loading = 1;
+								$scope.twitter.loading = 1;
+				        });
+				      
+				      var httpRequest = $http({
+				            method: 'GET',
+				            url: '/related/places/'+item.latitude+"/"+item.longitude+"/food",
+				
+				        }).success(function(data, status) {
+					        for (i = 0; i < data.length; i++) { 
+							    data[i].id = i + 5000;
+							}
+					        $scope.places.data = data
+							$scope.mapEvents = $scope.mapEvents.concat(data);
+					        if(data.length > 0)
+					        	$scope.places.loading = 2;
+					        else
+								$scope.places.loading = 1;
 				        });
 			      },
 			      back: function() {
