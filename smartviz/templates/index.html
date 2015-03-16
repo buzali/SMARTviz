@@ -56,7 +56,7 @@
 						    <md-subheader class="md-primary">{{feed.name}}</md-subheader>
 						    	<md-list>
 									<md-item ng-repeat="item in feed.data">
-										<md-button ng-click="data.selectEvent(item.name, item.address)">
+										<md-button ng-click="data.selectEvent(item)">
 									        <md-item-content>
 										        <div class="md-tile-content">
 											        <h3><strong>{{item.name}}</strong></h3>
@@ -78,7 +78,7 @@
 						<p>{{selected.address}}</p>
 					</md-content>
 					<md-divider></md-divider>
-					<md-list>
+					<md-list class="md-padding">
 						<md-item ng-repeat="item in twitter">
 					        <md-item-content>
 					          <div class="md-tile-left">
@@ -122,6 +122,9 @@
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
 			  
+			  var oldcenter;
+			  var oldmap;
+			  
 			  $scope.selected = {
 				  name: "",
 				  address: ""
@@ -130,14 +133,20 @@
 			  $scope.data = {
 			      selectedIndex : 0,
 			      selectedScreen: 0,
-			      selectEvent: function(name, address) {
+			      selectEvent: function(item) {
 				      $scope.data.selectedScreen = 2;
-				      $scope.selected.name = name;
-				      $scope.selected.address = address;
+				      $scope.selected.name = item.name;
+				      $scope.selected.address = item.address;
+				      
+				      oldcenter = $scope.map.center;
+				      oldmap = $scope.mapEvents;
+					  $scope.map.center = { latitude: item.latitude, longitude: item.longitude };
+				      $scope.map.zoom = 17;
+				      $scope.mapEvents = [item];
 				      
 				      var httpRequest = $http({
 				            method: 'GET',
-				            url: '/related/twitter/'+name,
+				            url: '/related/twitter/'+item.name,
 				
 				        }).success(function(data, status) {
 					        $scope.twitter = data
@@ -145,6 +154,9 @@
 			      },
 			      back: function() {
 				      $scope.data.selectedScreen = 1;
+				      $scope.map.center = oldcenter;
+					  $scope.map.zoom = 10;
+					  $scope.mapEvents = oldmap;
 			      }
 			    };
 			  
@@ -202,7 +214,10 @@
 							    data[i].id = i + 1000;
 							}
 							if (data.length > 0) {
-								$scope.mapEvents = $scope.mapEvents.concat(data);
+								if ($scope.data.selectedScreen == 2)
+									oldmap = oldmap.concat(data);
+								else
+									$scope.mapEvents = $scope.mapEvents.concat(data);
 					            $scope.events.push({name: "Foursquare", data: data});
 				            }
 				        });
@@ -216,7 +231,10 @@
 							    data[i].id = i + 2000;
 							}
 							if (data.length > 0) {
-								$scope.mapEvents = $scope.mapEvents.concat(data);
+								if ($scope.data.selectedScreen == 2)
+									oldmap = oldmap.concat(data);
+								else
+									$scope.mapEvents = $scope.mapEvents.concat(data);
 					            $scope.events.push({name: "Meetups", data: data});
 					        }
 				        });
@@ -230,7 +248,10 @@
 							    data[i].id = i + 3000;
 							}
 							if (data.length > 0) {
-								$scope.mapEvents = $scope.mapEvents.concat(data);
+								if ($scope.data.selectedScreen == 2)
+									oldmap = oldmap.concat(data);
+								else
+									$scope.mapEvents = $scope.mapEvents.concat(data);
 					            $scope.events.push({name: "Songkick", data: data});
 				            }
 				        });
