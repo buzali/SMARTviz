@@ -9,6 +9,7 @@ from eventbrite import Eventbrite
 from meetup import Meetup
 from datetime import date
 from songkick import Songkick
+import time
 
 class Event(object):
 
@@ -138,9 +139,12 @@ class MeetupsEventFetcher(object):
 class SongkickEvent(Event):
 
     def __init__(self, obj):
-        super(SongkickEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
+        super(SongkickEvent, self).__init__(obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
         self.type = 'Songkick'
         self.venue = obj['venue']
+        time_str = time.strftime('%H:%M', obj.get('time'))
+        venueLoc_str = obj.get('name','').split('at')[1].split('(')[0].strip()
+        self.description = u"{0} - {1}".format(venueLoc_str, time_str)
 
 class SongkickEventFetcher(object):
     @classmethod
@@ -155,12 +159,14 @@ class SongkickEventFetcher(object):
                 'lng':event.location.longitude,
                 'name': event.display_name,
                 'url': event.uri,
-                'venue': event.venue.display_name
+                'venue': event.venue.display_name,
+                'time': event.event_start.time
                 } for event in events_query]
             
             events = [SongkickEvent(e) for e in events_dict]
-        except:
-            events = []
+        except Exception, e:
+            raise e
+            
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
 
