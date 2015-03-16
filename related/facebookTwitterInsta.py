@@ -123,7 +123,13 @@ def searchInstagram(lat,lng):
         data = {}
         data['title'] = row.location.name
         #data['titleImage'] = profileImage
-        data['description'] = row.caption.text
+        try:
+            data['description'] = row.caption.text
+        except  :
+            print "No Description"
+            data['description']  = ""
+          
+
         data['type'] = 'instagram'
         data['link'] = row.link
               
