@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^related/places/(?P<lat>[^\/]+)/(?P<lng>[^\/]+)/(?P<typey>[^\/]+)/(?P<searchTerm>[^\/]+)', 'related.views.places'),
     url(r'^related/places/(?P<lat>[^\/]+)/(?P<lng>[^\/]+)/(?P<typey>[^\/]+)', 'related.views.places'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^about/', 'smartviz.views.about'),
     url(r'^$', 'smartviz.views.index'),
 )
