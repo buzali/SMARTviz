@@ -11,7 +11,8 @@ def index(request, ll=None):
     foursquare = FoursquareEventFetcher.fetch(ll)
     meetups = MeetupsEventFetcher.fetch(ll)
     songkick = SongkickEventFetcher.fetch(ll)
-    all_events = [foursquare, meetups, songkick]
+    eventbrite = EventbriteEventFetcher.fetch(ll)
+    all_events = [foursquare, meetups, songkick, eventbrite]
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 
@@ -36,6 +37,12 @@ def songkick(request, ll=None):
     json_all = json.dumps(songkick,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 
+def eventbrite(request, ll=None):
+    if not ll:
+        ll = '40.761662,-73.96805'
+    eventbrite = EventbriteEventFetcher.fetch(ll)
+    json_all = json.dumps(eventbrite,default=lambda o: o.__dict__)
+    return HttpResponse(json_all)
 
 def showtimes(request, ll=None):
     if not ll:

@@ -59,42 +59,41 @@ class FoursquareEventFetcher(object):
         return venues
         # return json.dumps(venues,default=lambda o: o.__dict__)
 
-# class EventbriteEvent(Event):
+class EventbriteEvent(Event):
 
-#     def __init__(self, obj):
-#         name = obj['name']
-#         location = "%s,%s" %(obj['location']['lat'],obj['location']['lng'])
-#         url = obj.get('shortUrl')
-#         photo = obj.get('photos')
-#         super(FoursquareEvent, self).__init__(name, location, url, photo) 
-#         self.type = 'Foursquare'
-
-# class EventbriteEventFetcher(object):
-#     @classmethod
-#     def fetch(cls, loc):
-#         lat = loc.split(',')[0]
-#         lng = loc.split(',')[1]
-#         eventbrite = Eventbrite(EVENTBRITE_TOKEN)
-#         # #lab coordinates
-#         # ll = '40.4428285,-79.9561175'
-#         # #bloomberg coordinates
-#         # ll = '40.761662,-73.96805'
-#         data = {'location.latitude':lat,
-#                 'location.longitude': lng,
-#                  'location.within': '10km'}
-
-#         events = eventbrite.get('/events/search',data)
+    def __init__(self, obj):
+        super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
+        self.type = 'Eventbrite'
+        self.description = "{0} - {1}".format(obj['start']['local'], obj['end']['local'])
 
 
-#         events['events'][1]['description']['text']
-#         events['events'][1]['name']['text']
-#         events['events'][1]['url']
-#         events['events'][1]['venue']['latitude']
-#         events['events'][1]['venue']['longitude']
-        
-#         trending_venues = client.venues.trending(params={'ll': loc})['venues']
-#         venues =  [FoursquareEvent(venue) for venue in trending_venues]
-#         return json.dumps(venues,default=lambda o: o.__dict__)
+class EventbriteEventFetcher(object):
+    @classmethod
+    def fetch(cls, loc):
+        lat = loc.split(',')[0]
+        lng = loc.split(',')[1]
+        eventbrite = Eventbrite(EVENTBRITE_TOKEN)
+        # #lab coordinates
+        # ll = '40.4428285,-79.9561175'
+        # #bloomberg coordinates
+        # ll = '40.761662,-73.96805'
+        data = {'location.latitude':lat,
+                'location.longitude': lng,
+                 'location.within': '10km',
+                 'start_date.keyword':'today'}
+
+        events_api = eventbrite.event_search(**data)
+
+        events_dict = [{'lat': e['venue']['latitude'],
+        'lng': e['venue']['longitude'],
+        'name': e['name']['text'],
+        'description': e.get('description'),
+        'url': e['url'],
+        'start': e.get('start'),
+        'end': e.get('end'),
+        } for e in events_api['events'] if e.get('venue')]
+        events = [EventbriteEvent(e) for e in events_dict]
+        return events
 
 class MeetupsEvent(Event):
 
@@ -158,6 +157,7 @@ class SongkickEventFetcher(object):
                 'url': event.uri,
                 'venue': event.venue.display_name
                 } for event in events_query]
+            
             events = [SongkickEvent(e) for e in events_dict]
         except:
             events = []
