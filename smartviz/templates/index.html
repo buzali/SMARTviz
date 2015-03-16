@@ -11,7 +11,7 @@
 		<section layout="row" flex>
 	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true" flex="30">
 	      <md-toolbar class="md-theme-indigo" style="min-height:148px;">
-			<md-content md-theme="docs-dark" class="md-padding" style="min-height:48px;max-height:48;">
+			<md-content md-theme="docs-dark" class="md-padding" style="min-height:48px;max-height:48;overflow: hidden;">
 	        <ng-switch on="data.selectedScreen" class="tabpanel-container">
 				<div role="tabpanel" ng-switch-when="0">
 			        <center>Search your city</center>
@@ -21,7 +21,7 @@
 			    </div>
 				<div role="tabpanel" ng-switch-when="2">
 			        <a class="md-accent" ng-click="data.back()" style="margin-top:-2; margin-bottom:-3px;float:left;">
-				        <i class="fa fa-chevron-left" style="font-size:.9em;"></i>
+				        <i class="fa fa-chevron-left md-accent" style="font-size:.9em;"></i>
 					</a>
 			        <center>See what's going on</center>
 			    </div>
@@ -53,7 +53,7 @@
 					<div ng-repeat="feed in events">
 					    <!--<div role="tabpanel" ng-if="$index == data.selectedIndex">
 						    <div class="demo-tab feed{{$index%4}}" layout="column">-->
-						    <md-subheader class="md-primary">{{feed.name}}</md-subheader>
+						    <md-subheader class="md-primary" style="border-bottom: 1px solid rgba(0,0,0,0.12);">{{feed.name}}</md-subheader>
 						    	<md-list>
 									<md-item ng-repeat="item in feed.data">
 										<md-button ng-click="data.selectEvent(item)">
@@ -78,6 +78,17 @@
 						<p>{{selected.address}}</p>
 					</md-content>
 					<md-divider></md-divider>
+				
+	        <ng-switch on="data.loading" class="tabpanel-container">
+				<div role="tabpanel" ng-switch-when="0">
+					<div layout="row" layout-sm="column" layout-align="space-around" style="margin:50px;">
+				      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				    </div>
+			    </div>
+				<div role="tabpanel" ng-switch-when="1" style="margin:50px;">
+			        <center>We couldn't find any tweets :(</center>
+			    </div>
+				<div role="tabpanel" ng-switch-when="2">
 					<md-list class="md-padding">
 						<md-item ng-repeat="item in twitter">
 					        <md-item-content>
@@ -91,6 +102,9 @@
 					        </md-item-content>
 						</md-item>
 					</md-list>
+			    </div>
+		    </ng-switch>	
+					
 			</div>
 	      </md-content>
 	    </md-sidenav>
@@ -133,6 +147,7 @@
 			  $scope.data = {
 			      selectedIndex : 0,
 			      selectedScreen: 0,
+			      loading: 0,
 			      selectEvent: function(item) {
 				      $scope.data.selectedScreen = 2;
 				      $scope.selected.name = item.name;
@@ -143,6 +158,7 @@
 					  $scope.map.center = { latitude: item.latitude, longitude: item.longitude };
 				      $scope.map.zoom = 17;
 				      $scope.mapEvents = [item];
+				      $scope.data.loading = 0;
 				      
 				      var httpRequest = $http({
 				            method: 'GET',
@@ -150,6 +166,10 @@
 				
 				        }).success(function(data, status) {
 					        $scope.twitter = data
+					        if(data.length > 0)
+					        	$scope.data.loading = 2;
+					        else
+								$scope.data.loading = 1;
 				        });
 			      },
 			      back: function() {
@@ -171,6 +191,9 @@
 		            click: function(marker, eventName, model, arguments) {
 		                $scope.map.window.model = model;
 		                $scope.map.window.show = true;
+		                
+		                if ($scope.data.selectedScreen != 2)
+		                	$scope.data.selectEvent(model);
 		            }
 		        },
 		        window: {
@@ -274,6 +297,7 @@
 			.md-tile-left div.image {
 				border-radius: 30px;
 				border: 1px solid #ddd;
+				background-color: #eee;
 				width: 48px;
 				height:48px;
 				background-size:cover;
