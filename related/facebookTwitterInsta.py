@@ -173,7 +173,7 @@ def findPlaces(lat,longy,type,searchTerm):
           longy = row["geometry"]["location"]["lng"]
           rating = getKey(row,"rating",None,None)
           openNow = getKey(row,"opening_hours","open_now",None)
-          stry = str(name) + " " + str(lat) + " " + str(longy) + " " + str(openNow)
+          #stry = u"{0} {1} {2} {3}".format(name,lat,longy,openNow)
           #print stry
           data['name'] = name
           data['rating']  = str(rating)
