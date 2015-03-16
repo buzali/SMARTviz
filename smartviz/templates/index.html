@@ -121,7 +121,7 @@
 					<div role="tabpanel" ng-switch-when="2">
 						<md-list class="md-padding">
 							<md-item ng-repeat="item in instagram.data">
-								<md-button ng-click="">
+								<span ng-click="">
 							        <md-item-content>
 						          <div class="md-tile-left">
 						              <div ng-style="{'background-image':'url('+item.photo+')'}" class="instaimage"></div>
@@ -131,7 +131,7 @@
 											        <p>{{item.description}}</p>
 								        </div>
 							        </md-item-content>
-								</md-button>
+								</span>
 							</md-item>
 						</md-list>
 				    </div>
@@ -150,7 +150,7 @@
 					<div role="tabpanel" ng-switch-when="2">
 						<md-list class="md-padding">
 							<md-item ng-repeat="item in twitter.data">
-								<md-button>
+								<span>
 						        <md-item-content>
 						          <div class="md-tile-left">
 						              <div ng-style="{'background-image':'url('+item.photo+')'}" class="image"></div>
@@ -160,7 +160,7 @@
 								        <p>{{item.description}}</p>
 							        </div>
 						        </md-item-content>
-								</md-button>
+								</span>
 							</md-item>
 						</md-list>
 				    </div>
