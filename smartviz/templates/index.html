@@ -4,12 +4,30 @@
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.8.2/angular-material.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	</head>
 	<body ng-controller="AppCtrl" layout="column">
 		{% verbatim %}
 		<section layout="row" flex>
 	    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true" flex="30">
 	      <md-toolbar class="md-theme-indigo" style="min-height:148px;">
+			<md-content md-theme="docs-dark" class="md-padding" style="min-height:48px;max-height:48;">
+	        <ng-switch on="data.selectedScreen" class="tabpanel-container">
+				<div role="tabpanel" ng-switch-when="0">
+			        <center>Search your city</center>
+			    </div>
+				<div role="tabpanel" ng-switch-when="1">
+			        <center>Select an event</center>
+			    </div>
+				<div role="tabpanel" ng-switch-when="2">
+			        <a class="md-accent" ng-click="data.back()" style="margin-top:-2; margin-bottom:-3px;float:left;">
+				        <i class="fa fa-chevron-left" style="font-size:.9em;"></i>
+					</a>
+			        <center>See what's going on</center>
+			    </div>
+		    </ng-switch>
+			</md-content>
+			<md-divider></md-divider>
 	        <h1 class="md-toolbar-tools" style="height:100px;max-height: 100px;">
 		        
 		        <md-content md-theme="docs-dark"  layout="column" layout-sm="column" style="font-size:1em;width:100%">
@@ -20,38 +38,59 @@
 			  </md-content>
 		        
 	        </h1>
-	        <md-tabs md-selected="data.selectedIndex" style="background:white;min-height:48px;">
-			    <md-tab ng-repeat="feed in events" label="{{feed.name}}" style="font-size:.9em;">
-		    </md-tabs>
+	        <!--<ng-switch on="data.selectedScreen" class="tabpanel-container">
+				<div role="tabpanel" ng-switch-when="1">
+			        <md-tabs md-selected="data.selectedIndex" style="background:white;min-height:48px;">
+					    <md-tab ng-repeat="feed in events" label="{{feed.name}}" style="font-size:.9em;">
+				    </md-tabs>
+			    </div>
+		    </ng-switch>-->
 	      </md-toolbar>
 	      <md-content ng-controller="LeftCtrl">
-	        
-			<div layout="column" flex layout-fill>
-			<div ng-repeat="feed in events">
-			    <div role="tabpanel" ng-if="$index == data.selectedIndex">
-			    <div class="demo-tab feed{{$index%4}}" layout="column">
-			        <md-list>
-			      <md-item ng-repeat="item in feed.data">
-			      	<md-button>
-			        <md-item-content>
-			          <!--<div class="md-tile-left">
-				          <div class="image" ng-style="{'background-image':'url('+item.titleImage+')'}"></div>
-			          </div>-->
-			          <div class="md-tile-content">
-			            <h3><strong>{{item.name}}</strong></h3>
-			            <p>{{item.address}}</p>
-			            <!--<p>
-			              {{item.description}}
-			            </p>-->
-			          </div>
-			        </md-item-content>
-			      </md-button>
-			      </md-item>
-			    </md-list>
-			      </div>
-			    </div>
-				</ng-switch>
+	        <ng-switch on="data.selectedScreen" class="tabpanel-container">
+			<div role="tabpanel" ng-switch-when="1">
+				<div layout="column" flex layout-fill>
+					<div ng-repeat="feed in events">
+					    <!--<div role="tabpanel" ng-if="$index == data.selectedIndex">
+						    <div class="demo-tab feed{{$index%4}}" layout="column">-->
+						    <md-subheader class="md-primary">{{feed.name}}</md-subheader>
+						    	<md-list>
+									<md-item ng-repeat="item in feed.data">
+										<md-button ng-click="data.selectEvent(item.name, item.address)">
+									        <md-item-content>
+										        <div class="md-tile-content">
+											        <h3><strong>{{item.name}}</strong></h3>
+											        <p>{{item.address}}</p>
+										        </div>
+									        </md-item-content>
+										</md-button>
+									</md-item>
+								</md-list>
+						<!--    </div>
+					    </div> -->
+					</div>
+	        	</div>
 			</div>
+			<div role="tabpanel" ng-switch-when="2">
+				
+					<md-content class="md-padding">
+					    <h2>{{selected.name}}</h2>
+						<p>{{selected.address}}</p>
+					</md-content>
+					<md-divider></md-divider>
+					<md-list>
+						<md-item ng-repeat="item in twitter">
+					        <md-item-content>
+					          <div class="md-tile-left">
+					              <div ng-style="{'background-image':'url('+item.photo+')'}" class="image"></div>
+					          </div>
+						        <div class="md-tile-content">
+							        <h3><strong>{{item.title}}</strong></h3>
+							        <p>{{item.description}}</p>
+						        </div>
+					        </md-item-content>
+						</md-item>
+					</md-list>
 			</div>
 	      </md-content>
 	    </md-sidenav>
@@ -83,10 +122,30 @@
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
 			  
+			  $scope.selected = {
+				  name: "",
+				  address: ""
+			  }
+			  
 			  $scope.data = {
 			      selectedIndex : 0,
-			      secondLocked : true,
-			      secondLabel : "Item Two"
+			      selectedScreen: 0,
+			      selectEvent: function(name, address) {
+				      $scope.data.selectedScreen = 2;
+				      $scope.selected.name = name;
+				      $scope.selected.address = address;
+				      
+				      var httpRequest = $http({
+				            method: 'GET',
+				            url: '/related/twitter/'+name,
+				
+				        }).success(function(data, status) {
+					        $scope.twitter = data
+				        });
+			      },
+			      back: function() {
+				      $scope.data.selectedScreen = 1;
+			      }
 			    };
 			  
 			  $scope.map = {
@@ -123,16 +182,9 @@
 			  
 	          $(".angular-google-map-container").height($(window).height());
 		        
-			    /*var httpRequest = $http({
-		            method: 'GET',
-		            url: '/related/twitter/soup%20kitchen',
-		
-		        }).success(function(data, status) {
-		            $scope.twitter = data;
-		        });*/
-		        
 		        $scope.$watch("details", function(newValue, oldValue) {
 				    if (newValue) {
+				     	$scope.data.selectedScreen = 1;
 						$scope.events = [];
 					    
 					    var lng = newValue.geometry.location.D;
