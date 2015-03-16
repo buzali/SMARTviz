@@ -126,6 +126,7 @@ class MeetupsEventFetcher(object):
         data = {
         'lat':lat,
         'lon':lng,
+        'radius': '8',
         'time':'0d,1d',
         'only':'event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
         }
