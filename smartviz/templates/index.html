@@ -400,6 +400,23 @@
 					            $scope.events.push({name: "Songkick", data: data});
 				            }
 				        });
+			        
+					    var httpRequest = $http({
+				            method: 'GET',
+				            url: '/events/eventbrite/'+lat+','+lng,
+				
+				        }).success(function(data, status) {
+					        for (i = 0; i < data.length; i++) { 
+							    data[i].id = i + 3000;
+							}
+							if (data.length > 0) {
+								if ($scope.data.selectedScreen == 2)
+									oldmap = oldmap.concat(data);
+								else
+									$scope.mapEvents = $scope.mapEvents.concat(data);
+					            $scope.events.push({name: "Eventbrite", data: data});
+				            }
+				        });
 			        }
 				});
 		        
