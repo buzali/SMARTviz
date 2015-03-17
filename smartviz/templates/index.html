@@ -283,7 +283,7 @@
 			      back: function() {
 				      $scope.data.selectedScreen = 1;
 				      $scope.map.center = oldcenter;
-					  $scope.map.zoom = 10;
+					  $scope.map.zoom = 12;
 					  $scope.mapEvents = oldmap;
 	                  $scope.map.window.show = false;
 					  $scope.foodEvents = [];
@@ -350,7 +350,7 @@
 					    var lat = newValue.geometry.location.k;
 					    
 						$scope.map.center = { latitude: lat, longitude: lng };
-						$scope.map.zoom = 10;
+						$scope.map.zoom = 12;
 			        
 					    var httpRequest = $http({
 				            method: 'GET',
