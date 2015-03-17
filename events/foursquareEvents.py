@@ -101,10 +101,9 @@ class MeetupsEvent(Event):
     def __init__(self, obj):
         name = obj['name']
         lat=lng = None
-        if obj.get('venue'):
-            lat = obj['venue']['lat']
-            lng = obj['venue']['lon']
-            self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
+        lat = obj['venue']['lat']
+        lng = obj['venue']['lon']
+        self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
         url = obj.get('event_url')
         photo = obj.get('photo_url')
         super(MeetupsEvent, self).__init__(name, lat, lng, url, photo) 
@@ -133,7 +132,7 @@ class MeetupsEventFetcher(object):
         meetups = meet._fetch('/2/open_events', **data)
         
         events_json = meetups['results']
-        events =  [MeetupsEvent(event) for event in events_json]
+        events =  [MeetupsEvent(event) for event in events_json if event.get('venue')]
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
 
