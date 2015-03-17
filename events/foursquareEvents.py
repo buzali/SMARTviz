@@ -35,7 +35,8 @@ class FoursquareEvent(Event):
         name = obj['name']
         lat = obj['location']['lat']
         lng = obj['location']['lng']
-        url = obj.get('shortUrl')
+        url = obj.get('url')
+        print url
         photo = obj.get('photos')
         super(FoursquareEvent, self).__init__(name, lat,lng, url, photo) 
         self.type = 'Foursquare'
