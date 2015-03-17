@@ -41,6 +41,7 @@ class FoursquareEvent(Event):
         super(FoursquareEvent, self).__init__(name, lat,lng, url, photo) 
         self.type = 'Foursquare'
         self.address = '\n'.join(obj['location']['formattedAddress'])
+        self.description = self.address
 
 class FoursquareEventFetcher(object):
     @classmethod
@@ -105,6 +106,7 @@ class MeetupsEvent(Event):
         lat = obj['venue']['lat']
         lng = obj['venue']['lon']
         self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
+        self.description = self.address
         url = obj.get('event_url')
         photo = obj.get('photo_url')
         super(MeetupsEvent, self).__init__(name, lat, lng, url, photo) 
