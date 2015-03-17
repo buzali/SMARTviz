@@ -177,9 +177,9 @@
 				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
 		            <div>{{map.window.model.name}}</div>
 		        </ui-gmap-window>
-					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents" doCluster="true">
-					</ui-gmap-markers>
 					<ui-gmap-markers models="foodEvents" coords="'self'" icon="'icon'" events="map.markersEvents"><!-- doCluster="true"> -->
+					</ui-gmap-markers>
+					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents" doCluster="true">
 					</ui-gmap-markers>
 				</ui-gmap-google-map>
 		</md-content>
@@ -259,6 +259,7 @@
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) { 
 							    data[i].id = i + 5000;
+							    data[i].icon = 'static/icon4.png';
 							}
 					        $scope.places.data = data
 							$scope.foodEvents = data;
@@ -359,6 +360,7 @@
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) { 
 							    data[i].id = i + 1000;
+							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
 								if ($scope.data.selectedScreen == 2)
@@ -376,6 +378,7 @@
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) { 
 							    data[i].id = i + 2000;
+							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
 								if ($scope.data.selectedScreen == 2)
@@ -393,6 +396,7 @@
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) { 
 							    data[i].id = i + 3000;
+							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
 								if ($scope.data.selectedScreen == 2)
@@ -410,6 +414,7 @@
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) { 
 							    data[i].id = i + 3000;
+							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
 								if ($scope.data.selectedScreen == 2)
