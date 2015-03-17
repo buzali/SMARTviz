@@ -7,7 +7,7 @@ import json
 import logging
 from eventbrite import Eventbrite
 from meetup import Meetup
-from datetime import date
+from datetime import date, datetime
 from songkick import Songkick
 import time
 
@@ -67,7 +67,7 @@ class EventbriteEvent(Event):
     def __init__(self, obj):
         super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
         self.type = 'Eventbrite'
-        self.description = "{0} - {1}".format(obj['start']['local'], obj['end']['local'])
+        self.description = "{0} - {1}".format(obj['start'], obj['end'])
 
 
 class EventbriteEventFetcher(object):
@@ -92,8 +92,8 @@ class EventbriteEventFetcher(object):
         'name': e['name']['text'],
         'description': e.get('description'),
         'url': e['url'],
-        'start': e.get('start'),
-        'end': e.get('end'),
+        'start': datetime.strptime(e['start']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
+        'end': datetime.strptime(e['end']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
         } for e in events_api['events'] if e.get('venue')]
         events = [EventbriteEvent(e) for e in events_dict]
         return events
