@@ -78,7 +78,7 @@
 				
 					<md-content class="md-padding">
 					    <h2>{{selected.name}}&nbsp;&nbsp;<a href="{{selected.url}}" target="_blank"><i class="fa fa-external-link" style="font-size:.8em;"></i></a></h2>
-						<p>{{selected.address}}</p>
+						<p>{{selected.description}}</p>
 					</md-content>
 					<md-divider></md-divider>
 			
@@ -207,6 +207,7 @@
 			  $scope.selected = {
 				  name: "",
 				  address: "",
+				  description: "",
 				  url: ""
 			  }
 			  
@@ -225,6 +226,7 @@
 				      $scope.data.selectedScreen = 2;
 				      $scope.selected.name = item.name;
 				      $scope.selected.address = item.address;
+				      $scope.selected.description = item.description;
 				      $scope.selected.url = item.url;
 				      
 	                  $scope.map.window.model = item;
