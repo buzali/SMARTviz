@@ -118,7 +118,7 @@ def searchInstagram(lat,lng):
 
      api = InstagramAPI(client_id='69ae00c802504e0599277ed72265e221', client_secret='7a8bc6124d694a71b482593078999774')
      #media = api.media_search(lat="40.858844",lng="80")
-     media = api.media_search(lat=lat,lng=lng)
+     media = api.media_search(lat=lat,lng=lng, distance='100')
      for row in media:
         data = {}
         data['title'] = row.location.name
