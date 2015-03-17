@@ -293,6 +293,7 @@
 				      $scope.map.center = {  latitude: 37.09024, longitude: -95.712891};
 					  $scope.map.zoom = 4;
 					  $scope.mapEvents = [];
+					  $scope.foodEvents = [];
 	                  $scope.map.window.show = false;
 	                  $scope.city = "";
 			  		  $scope.result = '';
@@ -398,6 +399,23 @@
 								else
 									$scope.mapEvents = $scope.mapEvents.concat(data);
 					            $scope.events.push({name: "Songkick", data: data});
+				            }
+				        });
+			        
+					    var httpRequest = $http({
+				            method: 'GET',
+				            url: '/events/eventbrite/'+lat+','+lng,
+				
+				        }).success(function(data, status) {
+					        for (i = 0; i < data.length; i++) { 
+							    data[i].id = i + 3000;
+							}
+							if (data.length > 0) {
+								if ($scope.data.selectedScreen == 2)
+									oldmap = oldmap.concat(data);
+								else
+									$scope.mapEvents = $scope.mapEvents.concat(data);
+					            $scope.events.push({name: "Eventbrite", data: data});
 				            }
 				        });
 			        }
