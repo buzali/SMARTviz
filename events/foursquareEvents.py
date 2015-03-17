@@ -142,8 +142,12 @@ class SongkickEvent(Event):
         super(SongkickEvent, self).__init__(obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
         self.type = 'Songkick'
         self.venue = obj['venue']
-        time_str = time.strftime('%H:%M', obj.get('time'))
-        venueLoc_str = obj.get('name','').split('at')[1].split('(')[0].strip()
+        time_str = ''
+        if obj.get('time'):
+            time_str = time.strftime('%H:%M', obj.get('time'))
+            venueLoc_str = obj.get('name','').split('at')[1].split('(')[0].strip()
+        else:
+            venueLoc_str = obj.get('name')
         self.description = u"{0} - {1}".format(venueLoc_str, time_str)
 
 class SongkickEventFetcher(object):
