@@ -315,6 +315,11 @@
 				  markers: [], 
 				  zoom: 4,
 				  markersEvents: {
+				  	mouseover: function(marker, eventName, model, arguments) {
+						$scope.map.window.model = model;
+						$scope.map.window.show = true;
+		                
+				  	},
 		            click: function(marker, eventName, model, arguments) {
 		                $scope.map.window.model = model;
 		                $scope.map.window.show = true;
