@@ -7,9 +7,9 @@ import json
 import logging
 from eventbrite import Eventbrite
 from meetup import Meetup
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from songkick import Songkick
-import time
+import time, pytz
 
 class Event(object):
 
@@ -25,7 +25,7 @@ class Event(object):
     def __unicode__(self):
         return u"{0}: {1}".format(self.type, self.name)
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
+        return json.dumps(self, default=lambda o: o.__dict__,
             sort_keys=True, indent=4)
 
 
@@ -38,7 +38,7 @@ class FoursquareEvent(Event):
         url = obj.get('url')
         print url
         photo = obj.get('photos')
-        super(FoursquareEvent, self).__init__(name, lat,lng, url, photo) 
+        super(FoursquareEvent, self).__init__(name, lat,lng, url, photo)
         self.type = 'Foursquare'
         self.address = '\n'.join(obj['location']['formattedAddress'])
         self.description = self.address
@@ -65,7 +65,7 @@ class FoursquareEventFetcher(object):
 class EventbriteEvent(Event):
 
     def __init__(self, obj):
-        super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
+        super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Eventbrite'
         self.description = "{0} - {1}".format(obj['start'], obj['end'])
 
@@ -109,7 +109,7 @@ class MeetupsEvent(Event):
         self.description = self.address
         url = obj.get('event_url')
         photo = obj.get('photo_url')
-        super(MeetupsEvent, self).__init__(name, lat, lng, url, photo) 
+        super(MeetupsEvent, self).__init__(name, lat, lng, url, photo)
         # self.description = obj.get('description')
         self.time = obj.get('time')
 
@@ -133,7 +133,7 @@ class MeetupsEventFetcher(object):
         'only':'event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
         }
         meetups = meet._fetch('/2/open_events', **data)
-        
+
         events_json = meetups['results']
         events =  [MeetupsEvent(event) for event in events_json if event.get('venue')]
         return events
@@ -142,7 +142,7 @@ class MeetupsEventFetcher(object):
 class SongkickEvent(Event):
 
     def __init__(self, obj):
-        super(SongkickEvent, self).__init__(obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None) 
+        super(SongkickEvent, self).__init__(obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Songkick'
         self.venue = obj['venue']
         time_str = ''
@@ -155,12 +155,16 @@ class SongkickEvent(Event):
 
 class SongkickEventFetcher(object):
     @classmethod
-    def fetch(cls, loc):
+    def fetch(cls, loc, dd=None):
+        if not dd:
+            dd=date.today()
+        #dd=datetime(dd.year, dd.month, dd.day, 0,0,0 , tzinfo=dd.tzinfo)
+        #dd_utc = dd.astimezone(pytz.utc)
         lat = loc.split(',')[0]
         lng = loc.split(',')[1]
         sk = Songkick('vYtwu69WMoO13X3H')
         loc = '{0},{1}'.format(lat,lng)
-        events_query = sk.events.query(location='geo:' + loc, per_page=10, min_date=date.today(), max_date=date.today())
+        events_query = sk.events.query(location='geo:' + loc, per_page=10, min_date=dd.date(), max_date= dd.date())
         try:
             events_dict = [{'lat': str(event.location.latitude),
                 'lng':event.location.longitude,
@@ -169,11 +173,11 @@ class SongkickEventFetcher(object):
                 'venue': event.venue.display_name,
                 'time': event.event_start.time
                 } for event in events_query]
-            
+
             events = [SongkickEvent(e) for e in events_dict]
         except Exception, e:
             raise e
-            
+
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
 

@@ -1,16 +1,23 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from foursquareEvents import *
+from event import *
 import json, requests
 from datetime import date
+import dateutil
 
 
 def index(request, ll=None):
     if not ll:
         ll = '40.761662,-73.96805'
+
+    #Get date from GET params
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
     foursquare = FoursquareEventFetcher.fetch(ll)
     meetups = MeetupsEventFetcher.fetch(ll)
-    songkick = SongkickEventFetcher.fetch(ll)
+    songkick = SongkickEventFetcher.fetch(ll, dd)
     eventbrite = EventbriteEventFetcher.fetch(ll)
     all_events = [foursquare, meetups, songkick, eventbrite]
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
@@ -33,7 +40,11 @@ def meetups(request, ll=None):
 def songkick(request, ll=None):
     if not ll:
         ll = '40.761662,-73.96805'
-    songkick = SongkickEventFetcher.fetch(ll)
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
+    songkick = SongkickEventFetcher.fetch(ll, dd)
     json_all = json.dumps(songkick,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 
