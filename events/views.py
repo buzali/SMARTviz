@@ -15,10 +15,10 @@ def index(request, ll=None):
     dd = None
     if date_str:
         dd = dateutil.parser.parse(date_str)
-    foursquare = FoursquareEventFetcher.fetch(ll)
-    meetups = MeetupsEventFetcher.fetch(ll)
+    foursquare = FoursquareEventFetcher.fetch(ll, dd)
+    meetups = MeetupsEventFetcher.fetch(ll,dd)
     songkick = SongkickEventFetcher.fetch(ll, dd)
-    eventbrite = EventbriteEventFetcher.fetch(ll)
+    eventbrite = EventbriteEventFetcher.fetch(ll,dd)
     all_events = [foursquare, meetups, songkick, eventbrite]
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
@@ -26,14 +26,24 @@ def index(request, ll=None):
 def foursquare(request, ll=None):
     if not ll:
         ll = '40.761662,-73.96805'
-    foursquare = FoursquareEventFetcher.fetch(ll)
+    #Get date from GET params
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
+    foursquare = FoursquareEventFetcher.fetch(ll, dd)
     json_all = json.dumps(foursquare,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 
 def meetups(request, ll=None):
     if not ll:
         ll = '40.761662,-73.96805'
-    meetups = MeetupsEventFetcher.fetch(ll)
+    #Get date from GET params
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
+    meetups = MeetupsEventFetcher.fetch(ll,dd)
     json_all = json.dumps(meetups,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 
@@ -51,7 +61,11 @@ def songkick(request, ll=None):
 def eventbrite(request, ll=None):
     if not ll:
         ll = '40.761662,-73.96805'
-    eventbrite = EventbriteEventFetcher.fetch(ll)
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
+    eventbrite = EventbriteEventFetcher.fetch(ll,dd)
     json_all = json.dumps(eventbrite,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
 

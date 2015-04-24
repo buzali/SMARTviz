@@ -9,6 +9,8 @@ from eventbrite import Eventbrite
 from meetup import Meetup
 from datetime import date, datetime, timedelta
 from songkick import Songkick
+from dateutil.tz import *
+import dateutil
 import time, pytz
 
 class Event(object):
@@ -36,7 +38,6 @@ class FoursquareEvent(Event):
         lat = obj['location']['lat']
         lng = obj['location']['lng']
         url = obj.get('url')
-        print url
         photo = obj.get('photos')
         super(FoursquareEvent, self).__init__(name, lat,lng, url, photo)
         self.type = 'Foursquare'
@@ -45,7 +46,13 @@ class FoursquareEvent(Event):
 
 class FoursquareEventFetcher(object):
     @classmethod
-    def fetch(cls, loc):
+    def fetch(cls, loc, dd=None):
+        if dd:
+            utc_now = datetime.utcnow()
+            utc_now = utc_now.replace(tzinfo=pytz.utc)
+            #If dd in future, return empty
+            if dd > utc_now:
+                return []
         loghandler = logging.StreamHandler(stream=sys.stdout)
         foursquare.log.addHandler(loghandler)
         foursquare.log.setLevel(logging.DEBUG)
@@ -72,7 +79,7 @@ class EventbriteEvent(Event):
 
 class EventbriteEventFetcher(object):
     @classmethod
-    def fetch(cls, loc):
+    def fetch(cls, loc, dd=None):
         lat = loc.split(',')[0]
         lng = loc.split(',')[1]
         eventbrite = Eventbrite(EVENTBRITE_TOKEN)
@@ -80,21 +87,43 @@ class EventbriteEventFetcher(object):
         # ll = '40.4428285,-79.9561175'
         # #bloomberg coordinates
         # ll = '40.761662,-73.96805'
+        datef = '%Y-%m-%dT%H:%M:%SZ'
+
+        #If no date, get today's in utc
+        if not dd:
+            est = pytz.timezone("US/Eastern")
+            now = datetime.now()
+            dd = est.localize(datetime(now.year, now.month, now.day, 0,0))
+
+        if not dd.tzinfo:
+            print "ERROR- Missing timezone"
+            return []
+        today_utc = dd.astimezone(tzutc())
+        print today_utc.strftime(datef)
+        print (today_utc + timedelta(1)).strftime(datef)
+
         data = {'location.latitude':lat,
                 'location.longitude': lng,
                  'location.within': '10km',
-                 'start_date.keyword':'today'}
+                 'start_date.range_start':today_utc.strftime(datef),
+                 'start_date.range_end':(today_utc + timedelta(1)).strftime(datef),
+                 }
 
         events_api = eventbrite.event_search(**data)
-
-        events_dict = [{'lat': e['venue']['latitude'],
-        'lng': e['venue']['longitude'],
-        'name': e['name']['text'],
-        'description': e.get('description'),
-        'url': e['url'],
-        'start': datetime.strptime(e['start']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
-        'end': datetime.strptime(e['end']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
-        } for e in events_api['events'] if e.get('venue')]
+        
+        events_dict = []
+        if events_api.get('events'):   
+            events_dict = [{'lat': e['venue']['latitude'],
+            'lng': e['venue']['longitude'],
+            'name': e['name']['text'],
+            'description': e.get('description'),
+            'url': e['url'],
+            'start': datetime.strptime(e['start']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
+            'end': datetime.strptime(e['end']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
+            } for e in events_api['events'] if e.get('venue')]
+        else:
+            #if error print api output
+            print events_api
         events = [EventbriteEvent(e) for e in events_dict]
         return events
 
@@ -115,9 +144,18 @@ class MeetupsEvent(Event):
 
         self.type = 'Meetups'
 
+def unix_time(dt):
+    epoch = datetime.utcfromtimestamp(0)
+    epoch = epoch.replace(tzinfo=pytz.utc)
+    delta = dt - epoch
+    return delta.total_seconds()
+
+def unix_time_millis(dt):
+    return int(unix_time(dt) * 1000.0)
+
 class MeetupsEventFetcher(object):
     @classmethod
-    def fetch(cls, loc):
+    def fetch(cls, loc, dd=None):
         lat = loc.split(',')[0]
         lng = loc.split(',')[1]
         meet = Meetup(MEETUPS_KEY)
@@ -125,11 +163,28 @@ class MeetupsEventFetcher(object):
         # ll = '40.4428285,-79.9561175'
         # #bloomberg coordinates
         # ll = '40.761662,-73.96805'
+
+        #If no date, get today's in utc
+        if not dd:
+            est = pytz.timezone("US/Eastern")
+            now = datetime.now()
+            dd = est.localize(datetime(now.year, now.month, now.day, 0,0))
+
+        if not dd.tzinfo:
+            print "ERROR- Missing timezone"
+            return []
+
+        day_utc = dd.astimezone(tzutc())
+        day_ms = unix_time_millis(day_utc)
+        print day_ms
+        next_ms = unix_time_millis(day_utc+timedelta(1))
+        print next_ms
+
         data = {
         'lat':lat,
         'lon':lng,
         'radius': '8',
-        'time':'0d,1d',
+        'time':'{0},{1}'.format(repr(day_ms),repr(next_ms)),
         'only':'event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
         }
         meetups = meet._fetch('/2/open_events', **data)
@@ -157,7 +212,7 @@ class SongkickEventFetcher(object):
     @classmethod
     def fetch(cls, loc, dd=None):
         if not dd:
-            dd=date.today()
+            dd=datetime.today()
         #dd=datetime(dd.year, dd.month, dd.day, 0,0,0 , tzinfo=dd.tzinfo)
         #dd_utc = dd.astimezone(pytz.utc)
         lat = loc.split(',')[0]
