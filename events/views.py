@@ -24,50 +24,16 @@ def index(request, ll=None):
     return HttpResponse(json_all)
 
 def foursquare(request, ll=None):
-    if not ll:
-        ll = '40.761662,-73.96805'
-    #Get date from GET params
-    date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
-    foursquare = FoursquareEventFetcher.fetch(ll, dd)
-    json_all = json.dumps(foursquare,default=lambda o: o.__dict__)
-    return HttpResponse(json_all)
+    return HttpResponse(fetch(request, ll, FoursquareEventFetcher))
 
 def meetups(request, ll=None):
-    if not ll:
-        ll = '40.761662,-73.96805'
-    #Get date from GET params
-    date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
-    meetups = MeetupsEventFetcher.fetch(ll,dd)
-    json_all = json.dumps(meetups,default=lambda o: o.__dict__)
-    return HttpResponse(json_all)
+   return HttpResponse(fetch(request, ll, MeetupsEventFetcher))
 
 def songkick(request, ll=None):
-    if not ll:
-        ll = '40.761662,-73.96805'
-    date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
-    songkick = SongkickEventFetcher.fetch(ll, dd)
-    json_all = json.dumps(songkick,default=lambda o: o.__dict__)
-    return HttpResponse(json_all)
+    return HttpResponse(fetch(request, ll, SongkickEventFetcher))
 
 def eventbrite(request, ll=None):
-    if not ll:
-        ll = '40.761662,-73.96805'
-    date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
-    eventbrite = EventbriteEventFetcher.fetch(ll,dd)
-    json_all = json.dumps(eventbrite,default=lambda o: o.__dict__)
-    return HttpResponse(json_all)
+    return HttpResponse(fetch(request, ll, EventbriteEventFetcher))
 
 def showtimes(request, ll=None):
     if not ll:
@@ -86,6 +52,19 @@ def showtimes(request, ll=None):
     if (r.text):
         return HttpResponse(r.json())
     return HttpResponse('')
+
+
+def fetch(request, ll, fetcher):
+    if not ll:
+        ll = '40.761662,-73.96805'
+    date_str = request.GET.get("date")
+    dd = None
+    if date_str:
+        dd = dateutil.parser.parse(date_str)
+    result = fetcher.fetch(ll,dd)
+    json_all = json.dumps(result,default=lambda o: o.__dict__)
+    return json_all
+
 
 
 # ['preferredImage']['uri']
