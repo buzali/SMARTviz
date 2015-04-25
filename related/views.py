@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from facebookTwitterInsta import *
 from gcalendarFunctions import *
 
@@ -45,9 +47,15 @@ def createCalendar(request,myUserId):
     return HttpResponse(resp)
 
 
-def createEvent(request,desc,startDate,endDate,location,myCalendarId):
+def getTheCalendarForUser(request,myUserId):
+    print "Get the calendar" 
+    resp = getCalendarForUser(myUserId)
+    return HttpResponse(resp)  
+
+@method_decorator(csrf_exempt)
+def createEvent(request,myCalendarId):
     print "Create an event"
-    resp = createAnEvent(desc,startDate,endDate,location,myCalendarId) 
+    resp = createAnEvent(request,myCalendarId) 
     return HttpResponse(resp) 
 
 

@@ -30,6 +30,12 @@ def firstAuthenticatation():
 
 
 def createACalendar(myUserId):
+    exists = getCalendarForUser(myUserId)
+    print "DOEs"
+    print exists
+    print "n"
+    if exists != "":
+        return exists
     import os
     print(os.getcwd() + "\n")
     scope = 'https://www.googleapis.com/auth/calendar'
@@ -71,8 +77,63 @@ def createACalendar(myUserId):
     return created_calendar['id']
 
 
-def createAnEvent(desc,startDate,endDate,location,myCalendarId):
+def getCalendarForUser(myUserId):   
 
+    import psycopg2
+    con = psycopg2.connect("postgres://stidzrltcswslr:dF-4xn841hPh9MRRTzLpbWNgAf@ec2-23-23-81-189.compute-1.amazonaws.com:5432/d7bs3h94l5spv1");
+    cur = con.cursor()
+    userId = myUserId
+    cur.execute("select calendarId from calendarDetails where userId = '" +userId + "'")
+    
+    rows = cur.fetchall()
+    calendarId = ""
+    for row in rows:
+                 data = {}
+                 print "   ", row[0]
+                 calendarId = row[0]
+    con.commit()
+    cur.close()
+    con.close()    
+    
+   
+    return calendarId
+
+
+def createAnEvent(request,myCalendarId):
+    mydict = request.POST 
+    print "In here"
+    try:
+       desc = mydict['desc']
+    except:
+       desc = "Event - Name Unknown"
+       print "no desc"
+ 
+    try:
+       startDate = mydict['startDate']
+    except:
+       startDate = "startDate Unknown"
+       print "no startDate" 
+       return "Error:Start Date Not Present "  
+
+    print "In here"
+    try:
+       endDate = mydict['endDate']
+    except:
+       endDate = "endDate Unknown"
+       print "no endDate"
+       return "Error:End Date Not Present " 
+
+
+    try:
+       location = mydict['location']
+    except:
+       location = ""
+       print "no location"
+              
+    #startDate = mydict['startDate']
+    #endDate = mydict['endDate']
+    #location = mydict['location']
+    
     scope = 'https://www.googleapis.com/auth/calendar'
     flow = flow_from_clientsecrets('related/client_secret.json', scope=scope)
     storage = Storage('credentials.dat')
@@ -116,7 +177,7 @@ def createAnEvent(desc,startDate,endDate,location,myCalendarId):
     created_event = service.events().insert(calendarId=myCalendarId, body=event).execute()
 
     print created_event['id']
-    return created_event['id']
+    return "Success:" + created_event['id']
 
 
 def deleteAnEvent(eventId,calendarId):
