@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from facebookTwitterInsta import *
-
+from gcalendarFunctions import *
 
 def facebook(request,searchQuery):
     print "facebook"
@@ -31,6 +31,30 @@ def places(request,lat,lng,typey,searchTerm=""):
     resp = findPlaces(lat,lng,typey,searchTerm)
     return HttpResponse(resp)
 
+
+
+def firstTimeAuth(request):
+    print "first auth"
+    resp = firstAuthenticatation()
+    return HttpResponse(resp)
+
+
+def createCalendar(request,myUserId):
+    print "Create a calendar"
+    resp = createACalendar(myUserId) 
+    return HttpResponse(resp)
+
+
+def createEvent(request,desc,startDate,endDate,location,myCalendarId):
+    print "Create an event"
+    resp = createAnEvent(desc,startDate,endDate,location,myCalendarId) 
+    return HttpResponse(resp) 
+
+
+def deleteEvent(eventId,calendarId):
+    print "Delete an event"
+    resp = deleteAnEvent(eventId,calendarId)
+    return HttpResponse(resp)      
 
 
 def index(request,ll=None):
