@@ -13,7 +13,7 @@ from oauth2client.client import flow_from_clientsecrets
 def firstAuthenticatation():
 
     scope = 'https://www.googleapis.com/auth/calendar'
-    flow = flow_from_clientsecrets('client_secret.json', scope=scope)
+    flow = flow_from_clientsecrets('related/client_secret.json', scope=scope)
 
     storage = Storage('credentials.dat')
     credentials = storage.get()
@@ -74,7 +74,7 @@ def createACalendar(myUserId):
 def createAnEvent(desc,startDate,endDate,location,myCalendarId):
 
     scope = 'https://www.googleapis.com/auth/calendar'
-    flow = flow_from_clientsecrets('client_secret.json', scope=scope)
+    flow = flow_from_clientsecrets('related/client_secret.json', scope=scope)
     storage = Storage('credentials.dat')
     credentials = storage.get()
     class fakeargparse(object):  # fake argparse.Namespace
@@ -110,7 +110,7 @@ def createAnEvent(desc,startDate,endDate,location,myCalendarId):
 
 def deleteAnEvent(eventId,calendarId):
     scope = 'https://www.googleapis.com/auth/calendar'
-    flow = flow_from_clientsecrets('client_secret.json', scope=scope)
+    flow = flow_from_clientsecrets('related/client_secret.json', scope=scope)
     storage = Storage('credentials.dat')
     credentials = storage.get()
     class fakeargparse(object):  # fake argparse.Namespace
