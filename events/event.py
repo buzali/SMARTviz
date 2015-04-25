@@ -76,6 +76,10 @@ class EventbriteEvent(Event):
         super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Eventbrite'
         self.description = "{0} - {1}".format(obj['start'], obj['end'])
+        self.start = obj['start']
+        self.end = obj['end']
+
+
 
 
 class EventbriteEventFetcher(object):
@@ -93,7 +97,6 @@ class EventbriteEventFetcher(object):
         #If no date, get today's
         if not dd:
             dd = get_today(loc)
-
         # get date in utc
         date_utc = dd.astimezone(tzutc())
         data = {'location.latitude':lat,
@@ -112,8 +115,8 @@ class EventbriteEventFetcher(object):
             'name': e['name']['text'],
             'description': e.get('description'),
             'url': e['url'],
-            'start': datetime.strptime(e['start']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
-            'end': datetime.strptime(e['end']['local'], "%Y-%m-%dT%H:%M:%S").strftime("%m/%d %H:%m"),
+            'start': get_EBdate(e['start']).isoformat(),
+            'end': get_EBdate(e['end']).isoformat(),
             } for e in events_api['events'] if e.get('venue')]
         else:
             #if error print api output
@@ -121,9 +124,17 @@ class EventbriteEventFetcher(object):
         events = [EventbriteEvent(e) for e in events_dict]
         return events
 
+def get_EBdate(date_dict):
+    tz_id = date_dict['timezone']
+    local = date_dict['local']
+    dd = dateutil.parser.parse(local)
+    tz = pytz.timezone(tz_id)
+    return tz.localize(dd)
+
+
 class MeetupsEvent(Event):
 
-    def __init__(self, obj):
+    def __init__(self, obj, tz=None):
         name = obj['name']
         lat=lng = None
         lat = obj['venue']['lat']
@@ -134,7 +145,11 @@ class MeetupsEvent(Event):
         photo = obj.get('photo_url')
         super(MeetupsEvent, self).__init__(name, lat, lng, url, photo)
         # self.description = obj.get('description')
-        self.time = obj.get('time')
+        if tz:
+            dd = datetime.utcfromtimestamp(obj.get('time')/1000)
+            self.start = tz.localize(dd).isoformat()
+        else:
+            self.start = obj.get('time')
 
         self.type = 'Meetups'
 
@@ -152,12 +167,12 @@ class MeetupsEventFetcher(object):
         #If no date, get today's in local tz
         if not dd:
             dd = get_today(loc)
-
+        tz = dd.tzinfo
         day_utc = dd.astimezone(tzutc())
+
+        #Convert date to milliseconds since epoch
         day_ms = unix_time_millis(day_utc)
-        print day_ms
         next_ms = unix_time_millis(day_utc+timedelta(1))
-        print next_ms
 
         data = {
         'lat':lat,
@@ -169,7 +184,8 @@ class MeetupsEventFetcher(object):
         meetups = meet._fetch('/2/open_events', **data)
 
         events_json = meetups['results']
-        events =  [MeetupsEvent(event) for event in events_json if event.get('venue')]
+        #import pdb; pdb.set_trace()
+        events =  [MeetupsEvent(event, tz) for event in events_json if event.get('venue')]
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
 
@@ -181,8 +197,10 @@ class SongkickEvent(Event):
         self.venue = obj['venue']
         time_str = ''
         if obj.get('time'):
-            time_str = time.strftime('%H:%M', obj.get('time'))
+            dd = obj['time']
+            time_str = dd.strftime('%H:%M')
             venueLoc_str = obj.get('name','').split('at')[1].split('(')[0].strip()
+            self.start = dd.isoformat()
         else:
             venueLoc_str = obj.get('name')
         self.description = u"{0} - {1}".format(venueLoc_str, time_str)
@@ -203,9 +221,9 @@ class SongkickEventFetcher(object):
                 'name': event.display_name,
                 'url': event.uri,
                 'venue': event.venue.display_name,
-                'time': event.event_start.time
+                'time': event.event_start.datetime,
                 } for event in events_query]
-
+            #import pdb; pdb.set_trace()
             events = [SongkickEvent(e) for e in events_dict]
         except Exception, e:
             raise e

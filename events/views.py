@@ -4,6 +4,7 @@ from event import *
 import json, requests
 from datetime import date
 from utils import *
+from firebase import firebase
 
 
 def index(request, ll=None):
@@ -23,6 +24,12 @@ def index(request, ll=None):
     all_events = [foursquare, meetups, songkick, eventbrite]
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
+
+def fb_test(request):
+    fb = firebase.FirebaseApplication('https://blinding-torch-1320.firebaseio.com/')
+    new_user = 'asd'
+    result = fb.post('/users', new_user)
+    return HttpResponse(str(result))
 
 
 def foursquare(request, ll=None):
