@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from event import *
 import json, requests
 from datetime import date
-import dateutil
+from utils import *
 
 
 def index(request, ll=None):
@@ -12,9 +12,10 @@ def index(request, ll=None):
 
     #Get date from GET params
     date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
+    try:
+        dd = get_datetz(date_str,ll)
+    except Exception, e:
+        return HttpResponse("error parsing date")
     foursquare = FoursquareEventFetcher.fetch(ll, dd)
     meetups = MeetupsEventFetcher.fetch(ll,dd)
     songkick = SongkickEventFetcher.fetch(ll, dd)
@@ -22,6 +23,7 @@ def index(request, ll=None):
     all_events = [foursquare, meetups, songkick, eventbrite]
     json_all = json.dumps(all_events,default=lambda o: o.__dict__)
     return HttpResponse(json_all)
+
 
 def foursquare(request, ll=None):
     return HttpResponse(fetch(request, ll, FoursquareEventFetcher))
@@ -57,10 +59,12 @@ def showtimes(request, ll=None):
 def fetch(request, ll, fetcher):
     if not ll:
         ll = '40.761662,-73.96805'
+    #Get date from GET params
     date_str = request.GET.get("date")
-    dd = None
-    if date_str:
-        dd = dateutil.parser.parse(date_str)
+    try:
+        dd = get_datetz(date_str,ll)
+    except Exception, e:
+        return HttpResponse("error parsing date")
     result = fetcher.fetch(ll,dd)
     json_all = json.dumps(result,default=lambda o: o.__dict__)
     return json_all

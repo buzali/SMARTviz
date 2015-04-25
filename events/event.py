@@ -12,6 +12,7 @@ from songkick import Songkick
 from dateutil.tz import *
 import dateutil
 import time, pytz
+from utils import *
 
 class Event(object):
 
@@ -89,30 +90,23 @@ class EventbriteEventFetcher(object):
         # ll = '40.761662,-73.96805'
         datef = '%Y-%m-%dT%H:%M:%SZ'
 
-        #If no date, get today's in utc
+        #If no date, get today's
         if not dd:
-            est = pytz.timezone("US/Eastern")
-            now = datetime.now()
-            dd = est.localize(datetime(now.year, now.month, now.day, 0,0))
+            dd = get_today(loc)
 
-        if not dd.tzinfo:
-            print "ERROR- Missing timezone"
-            return []
-        today_utc = dd.astimezone(tzutc())
-        print today_utc.strftime(datef)
-        print (today_utc + timedelta(1)).strftime(datef)
-
+        # get date in utc
+        date_utc = dd.astimezone(tzutc())
         data = {'location.latitude':lat,
                 'location.longitude': lng,
                  'location.within': '10km',
-                 'start_date.range_start':today_utc.strftime(datef),
-                 'start_date.range_end':(today_utc + timedelta(1)).strftime(datef),
+                 'start_date.range_start':date_utc.strftime(datef),
+                 'start_date.range_end':(date_utc + timedelta(1)).strftime(datef),
                  }
 
         events_api = eventbrite.event_search(**data)
-        
+
         events_dict = []
-        if events_api.get('events'):   
+        if events_api.get('events'):
             events_dict = [{'lat': e['venue']['latitude'],
             'lng': e['venue']['longitude'],
             'name': e['name']['text'],
@@ -144,15 +138,6 @@ class MeetupsEvent(Event):
 
         self.type = 'Meetups'
 
-def unix_time(dt):
-    epoch = datetime.utcfromtimestamp(0)
-    epoch = epoch.replace(tzinfo=pytz.utc)
-    delta = dt - epoch
-    return delta.total_seconds()
-
-def unix_time_millis(dt):
-    return int(unix_time(dt) * 1000.0)
-
 class MeetupsEventFetcher(object):
     @classmethod
     def fetch(cls, loc, dd=None):
@@ -164,15 +149,9 @@ class MeetupsEventFetcher(object):
         # #bloomberg coordinates
         # ll = '40.761662,-73.96805'
 
-        #If no date, get today's in utc
+        #If no date, get today's in local tz
         if not dd:
-            est = pytz.timezone("US/Eastern")
-            now = datetime.now()
-            dd = est.localize(datetime(now.year, now.month, now.day, 0,0))
-
-        if not dd.tzinfo:
-            print "ERROR- Missing timezone"
-            return []
+            dd = get_today(loc)
 
         day_utc = dd.astimezone(tzutc())
         day_ms = unix_time_millis(day_utc)
@@ -212,9 +191,7 @@ class SongkickEventFetcher(object):
     @classmethod
     def fetch(cls, loc, dd=None):
         if not dd:
-            dd=datetime.today()
-        #dd=datetime(dd.year, dd.month, dd.day, 0,0,0 , tzinfo=dd.tzinfo)
-        #dd_utc = dd.astimezone(pytz.utc)
+            dd = get_today(loc)
         lat = loc.split(',')[0]
         lng = loc.split(',')[1]
         sk = Songkick('vYtwu69WMoO13X3H')
@@ -234,17 +211,15 @@ class SongkickEventFetcher(object):
             raise e
 
         return events
-        # return json.dumps(events,default=lambda o: o.__dict__)
 
 
 
+def unix_time(dt):
+    epoch = datetime.utcfromtimestamp(0)
+    epoch = epoch.replace(tzinfo=pytz.utc)
+    delta = dt - epoch
+    return delta.total_seconds()
 
-
-
-# class CustomEncoder(json.JSONEncoder):
-#     def default(self, obj):
-#         if isinstance(obj, Event):
-#             return obj.to_json()
-
-#         return json.JSONEncoder.default(self, obj)
+def unix_time_millis(dt):
+    return int(unix_time(dt) * 1000.0)
 
