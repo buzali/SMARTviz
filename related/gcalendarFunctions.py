@@ -89,18 +89,29 @@ def createAnEvent(desc,startDate,endDate,location,myCalendarId):
     http = credentials.authorize(http)
     service = build('calendar', 'v3', http=http)
 
-    event = { 'summary': 'Appointment','sendNotifications':True,
+    #event = { 'summary': 'Appointment','sendNotifications':True,
  
- 'location': 'Somewhere',
-  'start': {
-    'dateTime': '2015-04-24T10:00:00.000-07:00'
-  },
-  'end': {
-    'dateTime': '2015-04-24T10:25:00.000-07:00'
+ #'location': 'Somewhere',
+ # 'start': {
+ #   'dateTime': '2015-04-24T10:00:00.000-07:00'
+ # },
+ # 'end': {
+ #   'dateTime': '2015-04-24T10:25:00.000-07:00'
+ # },
+ 
+#}
+
+    event = { 'summary': desc ,'sendNotifications':True,
+ 
+  'location': location,
+   'start': {
+     'dateTime': startDate
+   },
+   'end': {
+     'dateTime': endDate
   },
  
 }
-
     #myCalendarId = rg64sccbfcg3mue8j7dhd1vnl4@group.calendar.google.com
     created_event = service.events().insert(calendarId=myCalendarId, body=event).execute()
 
