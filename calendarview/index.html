@@ -22,46 +22,18 @@
     <title>Calendar View</title>
 </head>
 <body>
-<!-- Main container -->
-<div class="page-container">
-    <div class="input-group date">
-      <input type="text" class="form-control" id="datepicker"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-    </div>
-    <div id='calendar'></div>
-</div><!-- Page container END -->
+
+  <div class="page-container">
+
+      <!-- Date Picker -->
+      <div class="input-group date">
+        <input type="text" class="form-control" id="datepicker"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+      </div>
+
+      <!-- Calendar View -->
+      <div id='calendar'></div>
+
+  </div><!-- Page container END -->
 
 </body>
-
-<script type="text/javascript">
-
-$.ajax({
-// ajax call starts
-    url: 'https://thesyncer.com:440/cgi-bin/mypython.py',
-    data: 'numberOfRows=1', // Send value of the clicked button
-    dataType: 'json', // Choosing a JSON datatype
-    beforeSend: function( xhr ) {
-        xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
-    }
-})
-  .done(function( data ) {
-    //var jsony = JSON.stringify(eval("(" + data + ")"));
-    var j = JSON.parse(data);
-    console.log(j);
-    console.log(j.results.length);
-    myres = j.results;
-    for(var pos=0; pos < myres.length; pos++)
-     {
-       row = myres[pos];
-       console.log(row.word);
-       console.log(row.url);
-       $("#img1 img").attr("src",row.url);
-     }
-  });
-
-
-</script>
-<!-- Google Analytics -->
-
-<!-- Google Analytics END -->
-
 </html>
