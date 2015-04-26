@@ -12,7 +12,6 @@ $(document).ready(function()
     // console.log (default_date);
 
 
-
     // =====================================================
     // For the calendar view, we are using FullCalendar.io
     // Docs: http://fullcalendar.io/docs/
