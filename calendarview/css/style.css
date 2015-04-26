@@ -1,0 +1,28 @@
+body{
+	margin:0;
+	padding:0;
+    background:#FFF;
+    -webkit-font-smoothing: antialiased;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+/* Globals type styling */
+
+ h1, h2, h3, h4, h5, h6, p, label, .btn, a{
+}
+
+
+body {
+        margin: 40px 10px;
+        padding: 0;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        font-size: 14px;
+    }
+
+#calendar {
+    margin: 0 auto;
+}
