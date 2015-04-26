@@ -1,0 +1,51 @@
+<html>
+<head><script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+
+<script type="text/javascript">
+var isNewUser = true;
+
+
+
+//main firebase ref object
+var fb = new Firebase("https://blinding-torch-1320.firebaseio.com/");
+
+//Authentication
+fb.authWithOAuthPopup("google", function(error, authData) {
+  if (error) {
+    console.log("Login Failed!", error);
+  } else {
+    console.log("Authenticated successfully with payload:", authData);
+  }
+});
+
+
+
+// Register the callback to be fired every time auth state changes
+fb.onAuth(function(authData) {
+  if (authData && isNewUser) {
+    // save the user's profile into Firebase so we can list users,
+    // use them in Security and Firebase Rules, and show profiles
+    fb.child("users").child(authData.uid).set({
+      provider: authData.provider,
+      name: authData.google.displayName,
+      google: authData.google
+    });
+  }
+});
+
+//Save new item to list
+var listRf = fb.child("list").child(fb.getAuth().uid);
+listRf.push({title:'a'})
+
+//-Retreive
+listRf.on("value", function(snapshot){
+	console.log(snapshot.val());
+}, function (errorObject){
+	console.log("the read failed")
+});
+
+</script>
+
+</head>
+<body></body>
+</html>
