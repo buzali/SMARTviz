@@ -306,41 +306,20 @@
 				      			},
 				      			function( data ) {
 				      				item.calendarID = data.split(':')[1];
-
-						      		var temp = jQuery.extend({}, item);
-									delete temp.$$hashKey;
-					  				var firebaseFavsDate = firebaseFavs.child(date);
-						      		var postRef = firebaseFavsDate.push(temp);
-
-						      		item.firebaseID = postRef.key();
-
-						      		firebaseFavs.child(date).on("value", function(snapshot) {
-									  $scope.favorites = [];
-									  snapshot.forEach(function(data) {
-									  	temp = data.val();
-									  	temp.firebaseID = data.key();
-									    $scope.favorites.push(temp);
-
-										$scope.events.forEach(function(value){
-											value.data.forEach(function(v){
-												if (v.uid == temp.uid)
-													v.favorited = true;
-											})
-										})
-									  });
-
-									    if ($scope.favorites.length > 0) {
-									      	if ($scope.events.length == 0 || $scope.events[0].name != "Favorites") {
-											    $scope.events.unshift({name: "Favorites", data: $scope.favorites});
-											}
-											else {
-												$scope.events[0].data = $scope.favorites;
-											}
-										} else {
-											$scope.events.splice(0, 1);
-										}
-									});
+				      				$scope.favorites.forEach(function(v){
+										if (item.uid == v.uid)
+											v.calendarID = item.calendarID;
+									})
 							});
+
+
+				      		var temp = jQuery.extend({}, item);
+							delete temp.$$hashKey;
+			  				var firebaseFavsDate = firebaseFavs.child(date);
+				      		var postRef = firebaseFavsDate.push(temp);
+
+
+				      		item.firebaseID = postRef.key();
 
 						} else {
 			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
@@ -550,6 +529,7 @@
 										if (value.uid == v.uid)
 											value.favorited = true;
 											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
 									})
 								})
 								if ($scope.data.selectedScreen == 2)
@@ -577,6 +557,7 @@
 										if (value.uid == v.uid)
 											value.favorited = true;
 											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
 									})
 								})
 
@@ -605,6 +586,7 @@
 										if (value.uid == v.uid)
 											value.favorited = true;
 											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
 									})
 								})
 								if ($scope.data.selectedScreen == 2)
@@ -623,14 +605,16 @@
 						  snapshot.forEach(function(data) {
 						  	temp = data.val();
 						  	temp.firebaseID = data.key();
-						    $scope.favorites.push(temp);
 
 							$scope.events.forEach(function(value){
 								value.data.forEach(function(v){
-									if (v.uid == temp.uid)
+									if (v.uid == temp.uid) {
 										v.favorited = true;
+										v.calendarID = temp.calendarID;
+									}
 								})
 							})
+						    $scope.favorites.push(temp);
 
 
 						  });
