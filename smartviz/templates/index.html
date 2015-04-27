@@ -63,12 +63,12 @@
 						    <div class="demo-tab feed{{$index%4}}" layout="column">-->
 						    <md-subheader class="md-primary" style="border-bottom: 1px solid rgba(0,0,0,0.12);">{{feed.name}}</md-subheader>
 						    	<md-list>
-									<md-item ng-repeat="item in feed.data">
+									<md-item ng-repeat="item in feed.data" ng-show="item.favorited!=true || feed.name=='Favorites'">
 										<md-button ng-click="data.selectEvent(item)">
 									        <md-item-content>
 									        	<div layout="row" style="width:100%;">
 											        <div class="md-tile-content" flex="10">
-											        	<i class="fa star" ng-class="item.favorited ? 'fa-star' : 'fa-star-o'" ng-click="data.favoriteEvent(item, $event)"></i>
+											        	<i class="fa star" ng-class="item.favorited ? 'fa-star' : 'fa-star-o'" ng-click="data.favoriteEvent(item, $event)" ng-show="item.source!='foursquare'"></i>
 											        </div>
 											        <div class="md-tile-content" flex="80">
 												        <h3><strong>{{item.name}}</strong></h3>
@@ -310,7 +310,6 @@
 										if (item.uid == v.uid)
 											v.calendarID = item.calendarID;
 									})
-									alert();
 								});
 
 
@@ -494,6 +493,7 @@
 							    data[i].id = i + 1000;
 							    data[i].favorited = false;
 							    data[i].uid = "foursquare"+data[i].uid;
+							    data[i].source = "foursquare";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
@@ -522,6 +522,7 @@
 							    data[i].id = i + 2000;
 							    data[i].favorited = false;
 							    data[i].uid = "meetups"+data[i].uid;
+							    data[i].source = "meetups";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
@@ -550,6 +551,7 @@
 							    data[i].id = i + 3000;
 							    data[i].favorited = false;
 							    data[i].uid = "songkick"+data[i].uid;
+							    data[i].source = "songkick";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
@@ -579,6 +581,7 @@
 							    data[i].id = i + 4000;
 							    data[i].favorited = false;
 							    data[i].uid = "eventbrite"+data[i].uid;
+							    data[i].source = "eventbrite";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
