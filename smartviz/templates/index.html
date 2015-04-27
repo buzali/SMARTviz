@@ -285,12 +285,7 @@
 			          .content('Google calendar updated!')
 			          .action('View')
 			          .highlightAction(false)
-			          .position({
-				    bottom: false,
-				    top: true,
-				    left: false,
-				    right: true
-				  });
+			          .position("top right");
 			    $mdToast.show(toast).then(function() {
 			      window.open("https://www.google.com/calendar/embed?src="+calendarID);
 			    });
