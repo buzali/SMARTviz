@@ -223,6 +223,11 @@
 
 
     	<script>
+    		Date.prototype.addHours= function(h){
+			    this.setHours(this.getHours()+h);
+			    return this;
+			}
+
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
 			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
 
@@ -230,17 +235,22 @@
 			  var oldmap;
 			  var fb = new Firebase("https://blinding-torch-1320.firebaseio.com");
 			  var firebaseFavs = null;
+			  var calendarID = "";
 
 				fb.onAuth(function(authData) {
 				  if (authData !== null) {
 				    console.log("Authenticated successfully with payload:", authData);
-				    fb.child("users").child(authData.uid).set({
-				      provider: authData.provider,
-				      name: authData.google.displayName,
-				      google: authData.google
-				    });
 
-			 		firebaseFavs = fb.child("list").child(fb.getAuth().uid);
+				    $.get( "related/createCalendar/"+authData.uid, function( data ) {
+					    fb.child("users").child(authData.uid).set({
+					      provider: authData.provider,
+					      name: authData.google.displayName,
+					      google: authData.google,
+					      calendarID: data
+					    });
+					    calendarID = data;
+			 			firebaseFavs = fb.child("list").child(fb.getAuth().uid);
+					});
 				  } else {
 				    // Try to authenticate with Google via OAuth redirection
 				    fb.authWithOAuthRedirect("google", function(error, authData) {
@@ -287,6 +297,18 @@
 
 
 				      	if(item.favorited) {
+				      		$.post( "related/createEvent/"+calendarID,
+				      			{
+				      				"desc":item.title,
+				      				"startDate":item.start,
+				      				"endDate":item.end ? item.end : (new Date(item.start).addHours(1).toISOString()),
+				      				"location":item.venue
+				      			},
+				      			function( data ) {
+				      				console.log(data);
+							},function(data){console.log(data)});
+
+
 				      		var temp = jQuery.extend({}, item);
 							delete temp.$$hashKey;
 			  				var firebaseFavsDate = firebaseFavs.child(date);
