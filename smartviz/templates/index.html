@@ -599,6 +599,7 @@
 
 					  	var date = $scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
 						firebaseFavs.child(date).on("value", function(snapshot) {
+							alert("asdf");
 						  $scope.favorites = [];
 						  snapshot.forEach(function(data) {
 						  	temp = data.val();
