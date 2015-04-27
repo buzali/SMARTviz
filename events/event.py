@@ -16,8 +16,9 @@ from utils import *
 
 class Event(object):
 
-    def __init__(self, name, lat, lng, url, photo):
+    def __init__(self, uid, name, lat, lng, url, photo ):
         self.type = 'Generic'
+        self.uid = uid
         self.name = name
         self.latitude = lat
         self.longitude = lng
@@ -39,8 +40,9 @@ class FoursquareEvent(Event):
         lat = obj['location']['lat']
         lng = obj['location']['lng']
         url = obj.get('url')
+        uid = obj['id']
         photo = obj.get('photos')
-        super(FoursquareEvent, self).__init__(name, lat,lng, url, photo)
+        super(FoursquareEvent, self).__init__(uid, name, lat,lng, url, photo)
         self.type = 'Foursquare'
         self.address = '\n'.join(obj['location']['formattedAddress'])
         self.description = self.address
@@ -66,6 +68,7 @@ class FoursquareEventFetcher(object):
         # #bloomberg coordinates
         # ll = '40.761662,-73.96805'
         trending_venues = client.venues.trending(params={'ll': loc})['venues']
+
         venues =  [FoursquareEvent(venue) for venue in trending_venues]
         return venues
         # return json.dumps(venues,default=lambda o: o.__dict__)
@@ -73,7 +76,7 @@ class FoursquareEventFetcher(object):
 class EventbriteEvent(Event):
 
     def __init__(self, obj):
-        super(EventbriteEvent, self).__init__(obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None)
+        super(EventbriteEvent, self).__init__(obj.get('uid'),obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Eventbrite'
         self.description = "{0} - {1}".format(obj['start'], obj['end'])
         self.start = obj['start']
@@ -117,6 +120,7 @@ class EventbriteEventFetcher(object):
             'url': e['url'],
             'start': get_EBdate(e['start']).isoformat(),
             'end': get_EBdate(e['end']).isoformat(),
+            'uid': e['id']
             } for e in events_api['events'] if e.get('venue')]
         else:
             #if error print api output
@@ -139,11 +143,12 @@ class MeetupsEvent(Event):
         lat=lng = None
         lat = obj['venue']['lat']
         lng = obj['venue']['lon']
+        uid = obj['id']
         self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
         self.description = self.address
         url = obj.get('event_url')
         photo = obj.get('photo_url')
-        super(MeetupsEvent, self).__init__(name, lat, lng, url, photo)
+        super(MeetupsEvent, self).__init__(uid, name, lat, lng, url, photo)
         # self.description = obj.get('description')
         if tz:
             dd = datetime.utcfromtimestamp(obj.get('time')/1000)
@@ -179,12 +184,11 @@ class MeetupsEventFetcher(object):
         'lon':lng,
         'radius': '8',
         'time':'{0},{1}'.format(repr(day_ms),repr(next_ms)),
-        'only':'event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
+        'only':'id,event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
         }
         meetups = meet._fetch('/2/open_events', **data)
 
         events_json = meetups['results']
-        #import pdb; pdb.set_trace()
         events =  [MeetupsEvent(event, tz) for event in events_json if event.get('venue')]
         return events
         # return json.dumps(events,default=lambda o: o.__dict__)
@@ -192,7 +196,7 @@ class MeetupsEventFetcher(object):
 class SongkickEvent(Event):
 
     def __init__(self, obj):
-        super(SongkickEvent, self).__init__(obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None)
+        super(SongkickEvent, self).__init__(obj['uid'],obj.get('name','').split('at')[0], obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Songkick'
         self.venue = obj['venue']
         time_str = ''
@@ -222,8 +226,9 @@ class SongkickEventFetcher(object):
                 'url': event.uri,
                 'venue': event.venue.display_name,
                 'time': event.event_start.datetime,
+                'uid': event.id
                 } for event in events_query]
-            #import pdb; pdb.set_trace()
+           # import pdb; pdb.set_trace()
             events = [SongkickEvent(e) for e in events_dict]
         except Exception, e:
             events = []
