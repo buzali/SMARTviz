@@ -1,31 +1,80 @@
 // Startup Scripts
 $(document).ready(function()
 {
+    // Javascript for customizing default date to today
+    //
+    // var d = new Date();
+    // var month = d.getMonth()+1;
+    // var day = d.getDate();
+    // var default_date = d.getFullYear() + '-' +
+    // (month<10 ? '0' : '') + month + '-' +
+    // (day<10 ? '0' : '') + day;
+    // console.log (default_date);
 
-    var events_json = [{title: 'GSA Wine Tasting', start: '2015-04-29T16:00:00-04:00', url: 'http://google.com'},
-    {title: 'New Time', start: '2015-04-29T17:00:00', url: 'http://google.com'}];
 
-    var d = new Date();
-    var month = d.getMonth()+1;
-    var day = d.getDate();
+    // =====================================================
+    // For the calendar view, we are using FullCalendar.io
+    // Docs: http://fullcalendar.io/docs/
+    // =====================================================
 
-    var default_date = d.getFullYear() + '-' +
-    (month<10 ? '0' : '') + month + '-' +
-    (day<10 ? '0' : '') + day;
-    console.log (default_date);
+    var updated_json;
 
     // default calendar setup
-	$('#calendar').fullCalendar({
-            defaultDate: default_date,
+    $('#calendar').fullCalendar({
+            //defaultDate: default_date,
             editable: true,
             eventLimit: true, // allow "more" link when too many events
-            events: events_json
+            events: updated_json
     });
 
-    // making calendar links open in new tab
-    $("a.fc-day-grid-event").attr("target", "_BLANK");
+    // Sample value for Tofi's JSON
+    var tofi_json = [{"end": "2015-04-05T16:15:00+01:00", "name": "Improve your teaching skills using Rubrics: A Dynamic approach", "url": "http://www.eventbrite.co.uk/e/improve-your-teaching-skills-using-rubrics-a-dynamic-approach-tickets-16560170917?aff=ebapi", "photo": null, "longitude": "-0.12775829999998223", "start": "2015-04-05T09:30:00+01:00", "latitude": "51.5073509", "type": "Eventbrite", "description": "2015-04-05T09:30:00+01:00 - 2015-04-05T16:15:00+01:00"},
+        {"end": "2015-04-20T16:00:00+01:00", "name": "Kundalini Kriya Yoga Retreat and Special Chakra Meditation", "url": "http://www.eventbrite.co.uk/e/kundalini-kriya-yoga-retreat-and-special-chakra-meditation-tickets-16319020630?aff=ebapi", "photo": null, "longitude": "-0.1278", "start": "2015-04-05T17:00:00+01:00", "latitude": "51.5074", "type": "Eventbrite", "description": "2015-04-05T17:00:00+01:00 - 2015-04-20T16:00:00+01:00"}];
 
-    // Make sure to add events to calendar when user stars it.
+
+    // Sample JSON for calendar
+    var events_json = [{title: 'GSA Wine Tasting', start: '2015-04-29T16:00:00-04:00', end: '2015-04-29T18:00:00-04:00', url: 'http://google.com'},
+    {title: 'New Time', start: '2015-04-29T17:00:00', end: '2015-04-29T18:00:00-04:00', url: 'http://facebook.com'}];
+
+
+    // Open calendar links in new tab
+    $("a.fc-event").attr("target", "_BLANK");
+
+
+    // update calendar data with Tofi's JSON
+    function updateCalendarData(tofi_json) {
+
+        updated_json = changeTofiData(tofi_json);
+
+        // In order to refresh calendar, first remove event source and then add it back again
+        $('#calendar').fullCalendar( 'removeEventSource', updated_json);
+        $('#calendar').fullCalendar( 'addEventSource', updated_json);
+        $("#calendar").fullCalendar( 'refetchEvents' );
+        console.log(events_json);
+    }
+
+
+    // change "name" to "title" in tofi's json
+    function changeTofiData(tofi_json) {
+        var title;
+        for(var i = 0; i < tofi_json.length; i++) {
+            if(tofi_json[i].hasOwnProperty("name")) {
+                tofi_json[i]["title"] = tofi_json[i]["name"];
+                delete tofi_json[i]["name"];
+            }
+        }
+        return tofi_json;
+    }
+
+    // call this function to update calendar data
+    updateCalendarData(tofi_json);
+
+
+
+    // =====================================================
+    // For the datepicker, we are using Bootstrap Datepicker
+    // Docs: https://bootstrap-datepicker.readthedocs.org/en/latest/
+    // =====================================================
 
     // Setup for Bootstrap datepicker
     $('#datepicker').datepicker({
@@ -34,10 +83,11 @@ $(document).ready(function()
         todayHighlight: true
     });
 
-    // When date is change
+    // Registering event handler for datepicker
     $('#datepicker').datepicker()
     .on('changeDate', dateChanged);
 
+    // When user picks a new date, reload all the data
     function dateChanged(e) {
         console.log(e.date);
         console.log(e.date.getFullYear());
@@ -46,67 +96,7 @@ $(document).ready(function()
         console.log(e.date.getDate());
 
         // when date is changed, get new events
-        // prefill today's date.
+        // Make sure to add events to calendar when user stars it.
     }
-
-    // html to add a new event
 });
 
-/*
-[
-                {
-                    title: 'All Day Event',
-                    start: '2015-02-01'
-                },
-                {
-                    title: 'Long Event',
-                    start: '2015-02-07',
-                    end: '2015-02-10'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2015-02-09T16:00:00'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2015-02-16T16:00:00'
-                },
-                {
-                    title: 'Conference',
-                    start: '2015-02-11',
-                    end: '2015-02-13'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2015-02-12T10:30:00',
-                    end: '2015-02-12T12:30:00'
-                },
-                {
-                    title: 'Lunch',
-                    start: '2015-02-12T12:00:00'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2015-02-12T14:30:00'
-                },
-                {
-                    title: 'Happy Hour',
-                    start: '2015-02-12T17:30:00'
-                },
-                {
-                    title: 'Dinner',
-                    start: '2015-02-12T20:00:00'
-                },
-                {
-                    title: 'Birthday Party',
-                    start: '2015-02-13T07:00:00'
-                },
-                {
-                    title: 'Click for Google',
-                    url: 'http://google.com/',
-                    start: '2015-02-28'
-                }
-            ]
- */
