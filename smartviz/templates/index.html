@@ -229,30 +229,27 @@
 			  var oldcenter;
 			  var oldmap;
 			  var fb = new Firebase("https://blinding-torch-1320.firebaseio.com");
+			  var firebaseFavs = null;
 
-			  fb.onAuth(function(authData) {
-				  if (authData) {
-				    // save the user's profile into Firebase so we can list users,
-				    // use them in Security and Firebase Rules, and show profiles
+				fb.onAuth(function(authData) {
+				  if (authData !== null) {
+				    console.log("Authenticated successfully with payload:", authData);
 				    fb.child("users").child(authData.uid).set({
 				      provider: authData.provider,
 				      name: authData.google.displayName,
 				      google: authData.google
 				    });
-				  }
-				});
 
-			  if (fb.getAuth() == null) {
-			  	fb.authWithOAuthPopup("google", function(error, authData) {
-				  if (error) {
-				    console.log("Login Failed!", error);
+			 		firebaseFavs = fb.child("list").child(fb.getAuth().uid);
 				  } else {
-				    console.log("Authenticated successfully with payload:", authData);
+				    // Try to authenticate with Google via OAuth redirection
+				    fb.authWithOAuthRedirect("google", function(error, authData) {
+				      if (error) {
+				        console.log("Login Failed!", error);
+				      }
+				    });
 				  }
-				});
-			  } 
-
-			  var firebaseFavs = fb.child("list").child(fb.getAuth().uid);
+				})
 
 			  $scope.selected = {
 				  name: "",
