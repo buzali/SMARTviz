@@ -305,8 +305,7 @@
 				      				"location":item.venue
 				      			},
 				      			function( data ) {
-				      				alert(data);
-				      				item.calendarID = data;
+				      				item.calendarID = data.split(':')[1];
 							});
 
 
