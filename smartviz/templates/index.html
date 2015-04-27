@@ -306,20 +306,14 @@
 				      			},
 				      			function( data ) {
 				      				item.calendarID = data.split(':')[1];
-				      				$scope.favorites.forEach(function(v){
-										if (item.uid == v.uid)
-											v.calendarID = item.calendarID;
-									})
+
+						      		var temp = jQuery.extend({}, item);
+									delete temp.$$hashKey;
+					  				var firebaseFavsDate = firebaseFavs.child(date);
+						      		var postRef = firebaseFavsDate.push(temp);
+				      				item.firebaseID = postRef.key();
+				      				alert();
 								});
-
-
-				      		var temp = jQuery.extend({}, item);
-							delete temp.$$hashKey;
-			  				var firebaseFavsDate = firebaseFavs.child(date);
-				      		var postRef = firebaseFavsDate.push(temp);
-
-
-				      		item.firebaseID = postRef.key();
 
 						} else {
 			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
