@@ -306,16 +306,12 @@
 				      			},
 				      			function( data ) {
 				      				item.calendarID = data.split(':')[1];
+						      		var temp = jQuery.extend({}, item);
+									delete temp.$$hashKey;
+					  				var firebaseFavsDate = firebaseFavs.child(date);
+						      		var postRef = firebaseFavsDate.push(temp);
+						      		item.firebaseID = postRef.key();
 							});
-
-
-				      		var temp = jQuery.extend({}, item);
-							delete temp.$$hashKey;
-			  				var firebaseFavsDate = firebaseFavs.child(date);
-				      		var postRef = firebaseFavsDate.push(temp);
-
-
-				      		item.firebaseID = postRef.key();
 
 						} else {
 			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
