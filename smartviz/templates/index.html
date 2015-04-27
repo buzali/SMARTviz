@@ -299,7 +299,7 @@
 				      	if(item.favorited) {
 				      		$.post( "related/createEvent/"+calendarID,
 				      			{
-				      				"desc":item.title,
+				      				"desc":item.name,
 				      				"startDate":item.start,
 				      				"endDate":item.end ? item.end : (new Date(item.start).addHours(1).toISOString()),
 				      				"location":item.venue
@@ -327,7 +327,7 @@
 
 								$scope.events.forEach(function(value){
 									value.data.forEach(function(v){
-										if (v.uid == snapshot.val().uid)
+										if (snapshot.val() && v.uid == snapshot.val().uid)
 											v.favorited = false;
 									})
 								})
