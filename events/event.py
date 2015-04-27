@@ -226,7 +226,7 @@ class SongkickEventFetcher(object):
             #import pdb; pdb.set_trace()
             events = [SongkickEvent(e) for e in events_dict]
         except Exception, e:
-            raise e
+            events = []
 
         return events
 
