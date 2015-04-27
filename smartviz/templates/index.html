@@ -320,7 +320,7 @@
 						} else {
 			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
 
-			  				$.get("related/deleteEvent/"+item.calendarID, function(){});
+			  				$.get("related/deleteEvent/"+item.calendarID+"/"+calendarID, function(){});
 
 			  				postRef.on("value", function(snapshot) {
 								$scope.events.forEach(function(value){
