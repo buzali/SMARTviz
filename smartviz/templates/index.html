@@ -620,9 +620,11 @@
 						    if ($scope.favorites.length > 0) {
 						    	alert("1");
 						      	if ($scope.events.length == 0 || $scope.events[0].name != "Favorites") {
+						    	alert("1.1");
 								    $scope.events.unshift({name: "Favorites", data: $scope.favorites});
 								}
 								else {
+						    	alert("1.2");
 									$scope.events[0].data = $scope.favorites;
 								}
 							} else {
