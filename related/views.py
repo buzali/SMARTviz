@@ -59,7 +59,7 @@ def createEvent(request,myCalendarId):
     return HttpResponse(resp) 
 
 
-def deleteEvent(eventId,myCalendarId):
+def deleteEvent(request,eventId,myCalendarId):
     print "Delete an event"
     resp = deleteAnEvent(eventId,myCalendarId)
     return HttpResponse(resp)      
