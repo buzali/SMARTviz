@@ -5,6 +5,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
 	</head>
 	<body ng-controller="AppCtrl" layout="column">
 		{% verbatim %}
@@ -33,10 +34,14 @@
 			<md-divider></md-divider>
 	        <h1 class="md-toolbar-tools" style="height:100px;max-height: 100px;">
 
-		        <md-content md-theme="docs-dark"  layout="column" layout-sm="column" style="font-size:1em;width:100%">
-			    <md-input-container style="padding: 2px 2px 8px;" style="width:100%">
+		        <md-content md-theme="docs-dark"  layout="row" layout-sm="column" style="font-size:1em;width:100%">
+			    <md-input-container style="padding: 2px 2px 8px; width:65%;">
 			      <label>City</label>
 			      <input type="text" ng-autocomplete ng-model="result" details="details" options="options" placeholder=""/>
+			    </md-input-container>
+			    <md-input-container style="padding: 2px 2px 8px; width:35%;">
+			      <label>Date</label>
+			      <input type="date" ng-model="date" />
 			    </md-input-container>
 			  </md-content>
 
@@ -58,13 +63,21 @@
 						    <div class="demo-tab feed{{$index%4}}" layout="column">-->
 						    <md-subheader class="md-primary" style="border-bottom: 1px solid rgba(0,0,0,0.12);">{{feed.name}}</md-subheader>
 						    	<md-list>
-									<md-item ng-repeat="item in feed.data">
+									<md-item ng-repeat="item in feed.data" ng-show="item.favorited!=true || feed.name=='Favorites'">
 										<md-button ng-click="data.selectEvent(item)">
 									        <md-item-content>
-										        <div class="md-tile-content">
-											        <h3><strong>{{item.name}}</strong></h3>
-											        <p>{{item.description}}</p>
-										        </div>
+									        	<div layout="row" style="width:100%;">
+											        <div class="md-tile-content" flex="10">
+											        	<i class="fa star" ng-class="item.favorited ? 'fa-star' : 'fa-star-o'" ng-click="data.favoriteEvent(item, $event)" ng-show="item.source!='foursquare'"></i>
+											        </div>
+											        <div class="md-tile-content" flex="80">
+												        <h3><strong>{{item.name}}</strong></h3>
+												        <p>{{item.description}}</p>
+											        </div>
+											        <div class="md-tile-content" flex="10">
+											        	<i class="fa fa-angle-right arrow"></i>
+											        </div>
+										    	</div>
 									        </md-item-content>
 										</md-button>
 									</md-item>
@@ -77,8 +90,15 @@
 			<div role="tabpanel" ng-switch-when="2">
 
 					<md-content class="md-padding">
-					    <h2>{{selected.name}}&nbsp;&nbsp;<a href="{{selected.url}}" target="_blank"><i class="fa fa-external-link" style="font-size:.8em;"></i></a></h2>
-						<p>{{selected.description}}</p>
+						<div layout="row" style="width:100%;">
+							<div class="" flex="10">
+								<i class="fa star" ng-class="selected.favorited ? 'fa-star' : 'fa-star-o'" ng-click="data.favoriteEvent(selected, $event)" style="line-height:70px;"></i>
+							</div>
+							<div class="" flex="90">
+					   			<h2>{{selected.name}}&nbsp;&nbsp;<a href="{{selected.url}}" target="_blank"><i class="fa fa-external-link" style="font-size:.8em;"></i></a></h2>
+							</div>
+					</div>
+								<p>{{selected.description}}</p>
 					</md-content>
 					<md-divider></md-divider>
 
@@ -98,10 +118,15 @@
 							<md-item ng-repeat="item in places.data">
 								<md-button ng-click="data.selectPlace(item)">
 							        <md-item-content>
-								        <div class="md-tile-content">
-									        <h3><strong>{{item.name}}</strong></h3>
-											        <p>Rating: {{item.rating}}</p>
-								        </div>
+									    <div layout="row" style="width:100%;">
+									        <div class="md-tile-content" flex="90">
+										        <h3><strong>{{item.name}}</strong></h3>
+												        <p>Rating: {{item.rating}}</p>
+									        </div>
+									        <div class="md-tile-content" flex="10">
+									        	<i class="fa fa-angle-right arrow"></i>
+									        </div>
+									    </div>
 							        </md-item-content>
 								</md-button>
 							</md-item>
@@ -198,22 +223,73 @@
 
 
     	<script>
+    		Date.prototype.addHours= function(h){
+			    this.setHours(this.getHours()+h);
+			    return this;
+			}
+
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
-			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
+			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http, $mdToast) {
 
 			  var oldcenter;
 			  var oldmap;
+			  var fb = new Firebase("https://blinding-torch-1320.firebaseio.com");
+			  var firebaseFavs = null;
+			  var calendarID = "";
+
+				fb.onAuth(function(authData) {
+				  if (authData !== null) {
+				    console.log("Authenticated successfully with payload:", authData);
+
+				    $.get( "related/createCalendar/"+authData.uid, function( data ) {
+					    fb.child("users").child(authData.uid).set({
+					      provider: authData.provider,
+					      name: authData.google.displayName,
+					      google: authData.google,
+					      calendarID: data
+					    });
+					    calendarID = data;
+			 			firebaseFavs = fb.child("list").child(fb.getAuth().uid);
+					});
+				  } else {
+				    // Try to authenticate with Google via OAuth redirection
+				    fb.authWithOAuthRedirect("google", function(error, authData) {
+				      if (error) {
+				        console.log("Login Failed!", error);
+				      }
+				    });
+				  }
+				})
 
 			  $scope.selected = {
 				  name: "",
+				  favorited: false,
 				  address: "",
 				  description: "",
 				  url: ""
 			  }
 
+			  $scope.date = new Date();
+	          $scope.foodEvents = [];
+	          $scope.mapEvents = [];
+
 			  $scope.twitter = {loading: 0, data: []};
 			  $scope.places = {loading: 0, data: []};
 			  $scope.instagram = {loading: 0, data: []};
+
+			  $scope.favorites = [];
+
+
+			  $scope.showActionToast = function() {
+			    var toast = $mdToast.simple()
+			          .content('Google calendar updated!')
+			          .action('View')
+			          .highlightAction(false)
+			          .position("top right");
+			    $mdToast.show(toast).then(function() {
+			      window.open("https://www.google.com/calendar/embed?src="+calendarID);
+			    });
+			  };
 
 			  $scope.data = {
 			      selectedIndex : 0,
@@ -222,12 +298,61 @@
 	                  $scope.map.window.model = item;
 	                  $scope.map.window.show = true;
 			      },
+			      favoriteEvent: function(item, $event) {
+			      	$event.stopPropagation();
+			      	$scope.showActionToast();
+
+					var authData = fb.getAuth();
+					if (authData) {
+				      	item.favorited = !item.favorited;
+
+					    date = $scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
+
+
+				      	if(item.favorited) {
+				      		$.post( "related/createEvent/"+calendarID,
+				      			{
+				      				"desc":item.name,
+				      				"startDate":item.start,
+				      				"endDate":item.end ? item.end : (new Date(item.start).addHours(1).toISOString()),
+				      				"location":item.venue
+				      			},
+				      			function( data ) {
+				      				item.calendarID = data.split(':')[1];
+
+						      		var temp = jQuery.extend({}, item);
+									delete temp.$$hashKey;
+					  				var firebaseFavsDate = firebaseFavs.child(date);
+						      		var postRef = firebaseFavsDate.push(temp);
+				      				item.firebaseID = postRef.key();
+								});
+
+						} else {
+			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
+
+			  				$.get("related/deleteEvent/"+item.calendarID+"/"+calendarID, function(){});
+
+			  				postRef.on("value", function(snapshot) {
+								$scope.events.forEach(function(value){
+									value.data.forEach(function(v){
+										if (snapshot.val() && v.uid == snapshot.val().uid)
+											v.favorited = false;
+									})
+								})
+
+				  				postRef.remove();
+							}, function (errorObject) {
+							  console.log("The read failed: " + errorObject.code);
+							});
+							
+						}
+					} else {
+					  console.log("User is logged out");
+					}
+			      },
 			      selectEvent: function(item) {
 				      $scope.data.selectedScreen = 2;
-				      $scope.selected.name = item.name;
-				      $scope.selected.address = item.address;
-				      $scope.selected.description = item.description;
-				      $scope.selected.url = item.url;
+				      $scope.selected = item;
 
 	                  $scope.map.window.model = item;
 	                  $scope.map.window.show = true;
@@ -349,45 +474,72 @@
 
 	          $(".angular-google-map-container").height($(window).height());
 
-		        $scope.$watch("details", function(newValue, oldValue) {
-				    if (newValue) {
+
+
+		        $scope.$watch("[details,date]", function(newValue, oldValue) {
+				    if (newValue[0] && newValue[1]) {
 				     	$scope.data.selectedScreen = 1;
 						$scope.events = [];
+						$scope.mapEvents = [];
+						$scope.favorites = [];
 
-					    var lng = newValue.geometry.location.D;
-					    var lat = newValue.geometry.location.k;
+					    var lng = newValue[0].geometry.location.D;
+					    var lat = newValue[0].geometry.location.k;
+					    var date = '?date='+$scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
 
 						$scope.map.center = { latitude: lat, longitude: lng };
 						$scope.map.zoom = 12;
 
 					    var httpRequest = $http({
 				            method: 'GET',
-				            url: '/events/foursquare/'+lat+','+lng,
+				            url: '/events/foursquare/'+lat+','+lng+date,
 
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) {
 							    data[i].id = i + 1000;
+							    data[i].favorited = false;
+							    data[i].uid = "foursquare"+data[i].uid;
+							    data[i].source = "foursquare";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
+								data.forEach(function(value){
+									$scope.favorites.forEach(function(v){
+										if (value.uid == v.uid)
+											value.favorited = true;
+											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
+									})
+								})
 								if ($scope.data.selectedScreen == 2)
 									oldmap = oldmap.concat(data);
 								else
 									$scope.mapEvents = $scope.mapEvents.concat(data);
-					            $scope.events.push({name: "Foursquare", data: data});
+					            $scope.events.push({name: "Foursquare (trending)", data: data});
 				            }
 				        });
 
 					    var httpRequest = $http({
 				            method: 'GET',
-				            url: '/events/meetups/'+lat+','+lng,
+				            url: '/events/meetups/'+lat+','+lng+date,
 
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) {
 							    data[i].id = i + 2000;
+							    data[i].favorited = false;
+							    data[i].uid = "meetups"+data[i].uid;
+							    data[i].source = "meetups";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
+								data.forEach(function(value){
+									$scope.favorites.forEach(function(v){
+										if (value.uid == v.uid)
+											value.favorited = true;
+											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
+									})
+								})
 								if ($scope.data.selectedScreen == 2)
 									oldmap = oldmap.concat(data);
 								else
@@ -398,14 +550,26 @@
 
 					    var httpRequest = $http({
 				            method: 'GET',
-				            url: '/events/songkick/'+lat+','+lng,
+				            url: '/events/songkick/'+lat+','+lng+date,
 
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) {
 							    data[i].id = i + 3000;
+							    data[i].favorited = false;
+							    data[i].uid = "songkick"+data[i].uid;
+							    data[i].source = "songkick";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
+								data.forEach(function(value){
+									$scope.favorites.forEach(function(v){
+										if (value.uid == v.uid)
+											value.favorited = true;
+											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
+									})
+								})
+
 								if ($scope.data.selectedScreen == 2)
 									oldmap = oldmap.concat(data);
 								else
@@ -416,14 +580,25 @@
 
 					    var httpRequest = $http({
 				            method: 'GET',
-				            url: '/events/eventbrite/'+lat+','+lng,
+				            url: '/events/eventbrite/'+lat+','+lng+date,
 
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) {
-							    data[i].id = i + 3000;
+							    data[i].id = i + 4000;
+							    data[i].favorited = false;
+							    data[i].uid = "eventbrite"+data[i].uid;
+							    data[i].source = "eventbrite";
 							    data[i].icon = 'static/icon3.png';
 							}
 							if (data.length > 0) {
+								data.forEach(function(value){
+									$scope.favorites.forEach(function(v){
+										if (value.uid == v.uid)
+											value.favorited = true;
+											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
+									})
+								})
 								if ($scope.data.selectedScreen == 2)
 									oldmap = oldmap.concat(data);
 								else
@@ -431,8 +606,46 @@
 					            $scope.events.push({name: "Eventbrite", data: data});
 				            }
 				        });
+
+						
+
+					  	var date = $scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
+						firebaseFavs.child(date).on("value", function(snapshot) {
+						  
+						  $scope.favorites = [];
+						  snapshot.forEach(function(data) {
+						  	temp = data.val();
+						  	temp.firebaseID = data.key();
+
+							$scope.events.forEach(function(value){
+								value.data.forEach(function(v){
+									if (v.uid == temp.uid) {
+										v.favorited = true;
+									}
+								})
+							})
+						    $scope.favorites.push(temp);
+
+
+						  });
+						    if ($scope.favorites.length > 0) {
+						      	if ($scope.events.length == 0 || $scope.events[0].name != "Favorites") {
+								    $scope.events.unshift({name: "Favorites", data: $scope.favorites});
+								}
+								else {
+									$scope.events[0].data = $scope.favorites;
+								}
+							} else {
+								$scope.events.splice(0, 1);
+							}
+							$scope.$apply();
+						});
 			        }
-				});
+
+
+
+
+				},true);
 
 			})
 			.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
@@ -474,6 +687,17 @@
 				text-transform: none;
 				font-weight: inherit;
 
+			}
+
+			.star, .arrow {
+				font-size:25px;
+				line-height: 45px;
+			}
+			.fa-star {
+				color:#fb0;
+			}
+			.arrow {
+				color:#ccc;
 			}
 
 			input::-webkit-input-placeholder { color:transparent; }

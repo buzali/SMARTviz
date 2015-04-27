@@ -180,7 +180,7 @@ def createAnEvent(request,myCalendarId):
     return "Success:" + created_event['id']
 
 
-def deleteAnEvent(eventId,calendarId):
+def deleteAnEvent(myeventId,mycalendarId):
     scope = 'https://www.googleapis.com/auth/calendar'
     flow = flow_from_clientsecrets('related/client_secret.json', scope=scope)
     storage = Storage('credentials.dat')
@@ -196,7 +196,7 @@ def deleteAnEvent(eventId,calendarId):
     http = httplib2.Http()
     http = credentials.authorize(http)
     service = build('calendar', 'v3', http=http)
-    service.events().delete(calendarId='rg64sccbfcg3mue8j7dhd1vnl4@group.calendar.google.com', eventId='d3hlf8k2n1dv30m4q02l84gcnc').execute()
+    service.events().delete(calendarId=mycalendarId, eventId=myeventId).execute()
     return True
     
     
