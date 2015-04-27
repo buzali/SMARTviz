@@ -305,8 +305,8 @@
 				      				"location":item.venue
 				      			},
 				      			function( data ) {
-				      				console.log(data);
-							},function(data){console.log(data)});
+				      				item.calendarID = data;
+							});
 
 
 				      		var temp = jQuery.extend({}, item);
@@ -321,10 +321,6 @@
 			  				var postRef = firebaseFavs.child(date).child(item.firebaseID);
 
 			  				postRef.on("value", function(snapshot) {
-			  					$scope.events.forEach(function(entry) {
-								    console.log(entry);
-								});
-
 								$scope.events.forEach(function(value){
 									value.data.forEach(function(v){
 										if (snapshot.val() && v.uid == snapshot.val().uid)
@@ -499,6 +495,7 @@
 										if (value.uid == v.uid)
 											value.favorited = true;
 											value.firebaseID = v.firebaseID;
+											value.calendarID = v.calendarID;
 									})
 								})
 								if ($scope.data.selectedScreen == 2)
@@ -597,11 +594,8 @@
 						firebaseFavs.child(date).on("value", function(snapshot) {
 						  $scope.favorites = [];
 						  snapshot.forEach(function(data) {
-						  	console.log(data.val());
 						  	temp = data.val();
 						  	temp.firebaseID = data.key();
-						  	console.log(temp);
-						  	console.log();
 						    $scope.favorites.push(temp);
 
 							$scope.events.forEach(function(value){
