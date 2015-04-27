@@ -229,6 +229,19 @@
 			  var oldcenter;
 			  var oldmap;
 			  var fb = new Firebase("https://blinding-torch-1320.firebaseio.com");
+
+			  fb.onAuth(function(authData) {
+				  if (authData) {
+				    // save the user's profile into Firebase so we can list users,
+				    // use them in Security and Firebase Rules, and show profiles
+				    fb.child("users").child(authData.uid).set({
+				      provider: authData.provider,
+				      name: authData.google.displayName,
+				      google: authData.google
+				    });
+				  }
+				});
+			  
 			  if (fb.getAuth() == null) {
 			  	fb.authWithOAuthRedirect("google", function(error, authData) {
 				  if (error) {
