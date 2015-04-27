@@ -544,7 +544,7 @@
 
 					    var httpRequest = $http({
 				            method: 'GET',
-				            url: '/events/eventbrite/'+lat+','+lng+'?date='+date,
+				            url: '/events/eventbrite/'+lat+','+lng+date,
 
 				        }).success(function(data, status) {
 					        for (i = 0; i < data.length; i++) {
