@@ -59,9 +59,9 @@ def createEvent(request,myCalendarId):
     return HttpResponse(resp) 
 
 
-def deleteEvent(eventId,calendarId):
+def deleteEvent(eventId,myCalendarId):
     print "Delete an event"
-    resp = deleteAnEvent(eventId,calendarId)
+    resp = deleteAnEvent(eventId,myCalendarId)
     return HttpResponse(resp)      
 
 
