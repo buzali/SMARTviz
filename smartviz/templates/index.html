@@ -229,7 +229,7 @@
 			}
 
 			angular.module('StarterApp', ['uiGmapgoogle-maps','ngMaterial','ngAutocomplete'])
-			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http) {
+			.controller('AppCtrl', function($scope, $timeout, $mdSidenav, $log, $http, $mdToast) {
 
 			  var oldcenter;
 			  var oldmap;
@@ -279,6 +279,23 @@
 
 			  $scope.favorites = [];
 
+
+			  $scope.showActionToast = function() {
+			    var toast = $mdToast.simple()
+			          .content('Google calendar updated!')
+			          .action('View')
+			          .highlightAction(false)
+			          .position({
+				    bottom: false,
+				    top: true,
+				    left: false,
+				    right: true
+				  });
+			    $mdToast.show(toast).then(function() {
+			      window.open("https://www.google.com/calendar/embed?src="+calendarID);
+			    });
+			  };
+
 			  $scope.data = {
 			      selectedIndex : 0,
 			      selectedScreen: 0,
@@ -288,6 +305,7 @@
 			      },
 			      favoriteEvent: function(item, $event) {
 			      	$event.stopPropagation();
+			      	$scope.showActionToast();
 
 					var authData = fb.getAuth();
 					if (authData) {
