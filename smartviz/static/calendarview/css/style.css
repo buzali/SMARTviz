@@ -1,7 +1,7 @@
 body{
-	margin:0;
-	padding:0;
-    background:#FFF;
+	margin:30px !important;
+	padding:30px !important;
+    background:#eee;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -25,4 +25,8 @@ body {
 
 #calendar {
     margin: 0 auto;
+    background: white;
+    padding:20px;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 25px rgba(0,0,0,.1);
 }

@@ -1,4 +1,31 @@
 // Startup Scripts
+
+// update calendar data with Tofi's JSON
+function updateCalendarData(tofi_json) {
+
+    updated_json = changeTofiData(tofi_json);
+
+    // In order to refresh calendar, first remove event source and then add it back again
+    $('#calendar').fullCalendar( 'removeEventSource', updated_json);
+    $('#calendar').fullCalendar( 'addEventSource', updated_json);
+    $("#calendar").fullCalendar( 'refetchEvents' );
+    $("a.fc-event").attr("target", "_blank");
+}
+
+
+// change "name" to "title" in tofi's json
+function changeTofiData(tofi_json) {
+    var title;
+    for(var i = 0; i < tofi_json.length; i++) {
+        if(tofi_json[i].hasOwnProperty("name")) {
+            tofi_json[i]["title"] = tofi_json[i]["name"];
+            delete tofi_json[i]["name"];
+        }
+    }
+    return tofi_json;
+}
+
+
 $(document).ready(function()
 {
     // Javascript for customizing default date to today
@@ -28,46 +55,13 @@ $(document).ready(function()
     });
 
     // Sample value for Tofi's JSON
-    var tofi_json = [{"end": "2015-04-05T16:15:00+01:00", "name": "Improve your teaching skills using Rubrics: A Dynamic approach", "url": "http://www.eventbrite.co.uk/e/improve-your-teaching-skills-using-rubrics-a-dynamic-approach-tickets-16560170917?aff=ebapi", "photo": null, "longitude": "-0.12775829999998223", "start": "2015-04-05T09:30:00+01:00", "latitude": "51.5073509", "type": "Eventbrite", "description": "2015-04-05T09:30:00+01:00 - 2015-04-05T16:15:00+01:00"},
+    /*var tofi_json = [{"end": "2015-04-05T16:15:00+01:00", "name": "Improve your teaching skills using Rubrics: A Dynamic approach", "url": "http://www.eventbrite.co.uk/e/improve-your-teaching-skills-using-rubrics-a-dynamic-approach-tickets-16560170917?aff=ebapi", "photo": null, "longitude": "-0.12775829999998223", "start": "2015-04-05T09:30:00+01:00", "latitude": "51.5073509", "type": "Eventbrite", "description": "2015-04-05T09:30:00+01:00 - 2015-04-05T16:15:00+01:00"},
         {"end": "2015-04-20T16:00:00+01:00", "name": "Kundalini Kriya Yoga Retreat and Special Chakra Meditation", "url": "http://www.eventbrite.co.uk/e/kundalini-kriya-yoga-retreat-and-special-chakra-meditation-tickets-16319020630?aff=ebapi", "photo": null, "longitude": "-0.1278", "start": "2015-04-05T17:00:00+01:00", "latitude": "51.5074", "type": "Eventbrite", "description": "2015-04-05T17:00:00+01:00 - 2015-04-20T16:00:00+01:00"}];
 
 
-    // Sample JSON for calendar
-    var events_json = [{title: 'GSA Wine Tasting', start: '2015-04-29T16:00:00-04:00', end: '2015-04-29T18:00:00-04:00', url: 'http://google.com'},
-    {title: 'New Time', start: '2015-04-29T17:00:00', end: '2015-04-29T18:00:00-04:00', url: 'http://facebook.com'}];
-
-
-    // Open calendar links in new tab
-    $("a.fc-event").attr("target", "_BLANK");
-
-
-    // update calendar data with Tofi's JSON
-    function updateCalendarData(tofi_json) {
-
-        updated_json = changeTofiData(tofi_json);
-
-        // In order to refresh calendar, first remove event source and then add it back again
-        $('#calendar').fullCalendar( 'removeEventSource', updated_json);
-        $('#calendar').fullCalendar( 'addEventSource', updated_json);
-        $("#calendar").fullCalendar( 'refetchEvents' );
-        console.log(events_json);
-    }
-
-
-    // change "name" to "title" in tofi's json
-    function changeTofiData(tofi_json) {
-        var title;
-        for(var i = 0; i < tofi_json.length; i++) {
-            if(tofi_json[i].hasOwnProperty("name")) {
-                tofi_json[i]["title"] = tofi_json[i]["name"];
-                delete tofi_json[i]["name"];
-            }
-        }
-        return tofi_json;
-    }
 
     // call this function to update calendar data
-    updateCalendarData(tofi_json);
+    updateCalendarData(tofi_json);*/
 
 
 

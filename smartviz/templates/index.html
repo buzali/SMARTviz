@@ -198,15 +198,16 @@
 	      </md-content>
 	    </md-sidenav>
 	    <md-content flex>
-				<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+	    		<div style="flex:1;"><iframe src="static/calendarview/index.html" id="iframe" scrolling="no"></iframe></div>
+				<!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>
 				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
 		            <div>{{map.window.model.name}}</div>
 		        </ui-gmap-window>
-					<ui-gmap-markers models="foodEvents" coords="'self'" icon="'icon'" events="map.markersEvents"><!-- doCluster="true"> -->
+					<ui-gmap-markers models="foodEvents" coords="'self'" icon="'icon'" events="map.markersEvents">
 					</ui-gmap-markers>
 					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents" doCluster="false">
 					</ui-gmap-markers>
-				</ui-gmap-google-map>
+				</ui-gmap-google-map>-->
 		</md-content>
 		</section>
 		{% endverbatim %}
@@ -250,6 +251,19 @@
 					    });
 					    calendarID = data;
 			 			firebaseFavs = fb.child("list").child(fb.getAuth().uid);
+
+
+						firebaseFavs.on("value", function(snapshot) {
+						  
+						  var allFavs = [];
+						  snapshot.forEach(function(d) {
+						  	d.forEach(function(events) {
+						  		allFavs.push(events.val());
+						  	})
+						  });
+						  document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
+						  console.log(allFavs);
+						});
 					});
 				  } else {
 				    // Try to authenticate with Google via OAuth redirection
@@ -640,12 +654,16 @@
 							}
 							$scope.$apply();
 						});
+
+
 			        }
 
 
 
 
 				},true);
+
+				
 
 			})
 			.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
@@ -698,6 +716,14 @@
 			}
 			.arrow {
 				color:#ccc;
+			}
+
+			iframe {
+				position:absolute;
+				width:100%;
+				height:100%;
+				overflow:hidden;
+				border:none;
 			}
 
 			input::-webkit-input-placeholder { color:transparent; }
