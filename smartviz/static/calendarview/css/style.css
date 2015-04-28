@@ -1,6 +1,8 @@
 body{
 	margin:30px !important;
 	padding:30px !important;
+    margin-bottom:0px !important;
+    padding-bottom:0px !important;
     background:#eee;
     -webkit-font-smoothing: antialiased;
 }
