@@ -6,7 +6,7 @@ function updateCalendarData(tofi_json) {
     updated_json = changeTofiData(tofi_json);
 
     // In order to refresh calendar, first remove event source and then add it back again
-    $('#calendar').fullCalendar( 'removeEventSource', updated_json);
+    $('#calendar').fullCalendar( 'removeEventSource');
     $('#calendar').fullCalendar( 'addEventSource', updated_json);
     $("#calendar").fullCalendar( 'refetchEvents' );
     $("a.fc-event").attr("target", "_blank");
