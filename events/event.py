@@ -152,7 +152,7 @@ class MeetupsEvent(Event):
         # self.description = obj.get('description')
         if tz:
             dd = datetime.utcfromtimestamp(obj.get('time')/1000)
-            self.start = tz.localize(dd).isoformat()
+            self.start = tz.fromutc(dd).isoformat()
         else:
             self.start = obj.get('time')
 
