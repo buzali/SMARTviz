@@ -198,8 +198,8 @@
 	      </md-content>
 	    </md-sidenav>
 	    <md-content flex>
-	    		<div style="flex:1;"><iframe src="static/calendarview/index.html" id="iframe" scrolling="no"></iframe></div>
-				<!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+	    		<div style="flex:1;" ng-hide="showMap"><iframe src="static/calendarview/index.html" id="iframe" scrolling="no"></iframe></div>
+				<ui-gmap-google-map center='map.center' zoom='map.zoom' ng-hide="!showMap">
 				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
 		            <div>{{map.window.model.name}}</div>
 		        </ui-gmap-window>
@@ -207,8 +207,14 @@
 					</ui-gmap-markers>
 					<ui-gmap-markers models="mapEvents" coords="'self'" icon="'icon'" events="map.markersEvents" doCluster="false">
 					</ui-gmap-markers>
-				</ui-gmap-google-map>-->
+				</ui-gmap-google-map>
 		</md-content>
+
+		<section layout="row" layout-sm="column" layout-align="center center" class="buttons">
+	      <md-button class="md-raised md-primary" ng-click="showMap = false">Calendar</md-button>
+	      <md-button class="md-raised md-primary" ng-click="showMap = true">Map View</md-button>
+	    </section>
+
 		</section>
 		{% endverbatim %}
 
@@ -282,6 +288,7 @@
 				  url: ""
 			  }
 
+			  $scope.showMap = true;
 			  $scope.date = new Date();
 	          $scope.foodEvents = [];
 	          $scope.mapEvents = [];
@@ -291,6 +298,8 @@
 			  $scope.instagram = {loading: 0, data: []};
 
 			  $scope.favorites = [];
+
+    		  	$(".angular-google-map-container").height($(window).height());
 
 
 			  $scope.showActionToast = function() {
@@ -484,8 +493,6 @@
 			      types: '(cities)'
 			  };
     		  $scope.details = '';
-
-	          $(".angular-google-map-container").height($(window).height());
 
 
 
@@ -704,6 +711,17 @@
 				text-transform: none;
 				font-weight: inherit;
 
+			}
+
+			.buttons {
+				position:fixed;
+				right:0;
+				bottom:0;
+			}
+			.buttons .md-raised {
+				margin:10px;
+				margin-left:0;
+				margin-bottom: 15px;
 			}
 
 			.star, .arrow {
