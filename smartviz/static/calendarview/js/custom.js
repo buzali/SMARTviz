@@ -1,9 +1,15 @@
 // Startup Scripts
+var old_json = null;
 
 // update calendar data with Tofi's JSON
 function updateCalendarData(tofi_json) {
 
+    if (old_json) {
+        $('#calendar').fullCalendar( 'removeEventSource', old_json);
+    }
+
     updated_json = changeTofiData(tofi_json);
+    old_json = updated_json;
 
     // In order to refresh calendar, first remove event source and then add it back again
     $('#calendar').fullCalendar( 'removeEventSource');
