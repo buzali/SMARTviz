@@ -206,7 +206,7 @@ class SongkickEvent(Event):
         if obj.get('time'):
             dd = obj['time']
             time_str = dd.strftime('%H:%M')
-            venueLoc_str = obj.get('name','').split('at')[1].split('(')[0].strip()
+            venueLoc_str = self.venue
             self.start = dd.isoformat()
         else:
             venueLoc_str = obj.get('name')
