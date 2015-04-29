@@ -78,9 +78,9 @@ class EventbriteEvent(Event):
     def __init__(self, obj):
         super(EventbriteEvent, self).__init__(obj.get('uid'),obj.get('name'), obj.get('lat'), obj.get('lng'), obj.get('url'), None)
         self.type = 'Eventbrite'
-        self.description = "{0} - {1}".format(obj['start'], obj['end'])
-        self.start = obj['start']
-        self.end = obj['end']
+        self.description = "{0} {1} - {2}".format(obj['venue'], obj['start'].strftime('%I:%M%p').lower(), obj['end'].strftime('%I:%M%p').lower())
+        self.start = obj['start'].isoformat()
+        self.end = obj['end'].isoformat()
 
 
 
@@ -116,10 +116,11 @@ class EventbriteEventFetcher(object):
             events_dict = [{'lat': e['venue']['latitude'],
             'lng': e['venue']['longitude'],
             'name': e['name']['text'],
+            'venue': e['venue']['name'],
             'description': e.get('description'),
             'url': e['url'],
-            'start': get_EBdate(e['start']).isoformat(),
-            'end': get_EBdate(e['end']).isoformat(),
+            'start': get_EBdate(e['start']),
+            'end': get_EBdate(e['end']),
             'uid': e['id']
             } for e in events_api['events'] if e.get('venue')]
         else:
@@ -145,16 +146,18 @@ class MeetupsEvent(Event):
         lng = obj['venue']['lon']
         uid = obj['id']
         self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
-        self.description = self.address
+        self.venue = obj['venue']['name']
         url = obj.get('event_url')
         photo = obj.get('photo_url')
         super(MeetupsEvent, self).__init__(uid, name, lat, lng, url, photo)
         # self.description = obj.get('description')
+        dd = datetime.utcfromtimestamp(obj.get('time')/1000)
         if tz:
-            dd = datetime.utcfromtimestamp(obj.get('time')/1000)
             self.start = tz.fromutc(dd).isoformat()
         else:
-            self.start = obj.get('time')
+            self.start = dd.isoformat()
+
+        self.description = "{0} {1}".format(self.venue, dd.strftime('%I:%M%p').lower())
 
         self.type = 'Meetups'
 
@@ -207,7 +210,7 @@ class SongkickEvent(Event):
             self.start = dd.isoformat()
         else:
             venueLoc_str = obj.get('name')
-        self.description = u"{0} - {1}".format(venueLoc_str, time_str)
+        self.description = u"{0} {1}".format(venueLoc_str, time_str)
 
 class SongkickEventFetcher(object):
     @classmethod
