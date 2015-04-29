@@ -35,11 +35,11 @@
 	        <h1 class="md-toolbar-tools" style="height:100px;max-height: 100px;">
 
 		        <md-content md-theme="docs-dark"  layout="row" layout-sm="column" style="font-size:1em;width:100%">
-			    <md-input-container style="padding: 2px 2px 8px; width:65%;">
+			    <md-input-container style="padding: 2px 2px 8px; width:50%;">
 			      <label>City</label>
 			      <input type="text" ng-autocomplete ng-model="result" details="details" options="options" placeholder=""/>
 			    </md-input-container>
-			    <md-input-container style="padding: 2px 2px 8px; width:35%;">
+			    <md-input-container style="padding: 2px 2px 8px; width:50%;">
 			      <label>Date</label>
 			      <input type="date" ng-model="date" />
 			    </md-input-container>
@@ -198,7 +198,7 @@
 	      </md-content>
 	    </md-sidenav>
 	    <md-content flex>
-	    		<div style="flex:1;" ng-hide="showMap"><iframe src="static/calendarview/index.html" id="iframe" scrolling="no"></iframe></div>
+	    		<div style="flex:1;" ng-hide="showMap"><iframe src="static/calendarview/index.html" id="iframe"></iframe></div>
 				<ui-gmap-google-map center='map.center' zoom='map.zoom' ng-hide="!showMap">
 				 <ui-gmap-window show="map.window.show" coords="map.window.model" options="map.window.options" closeclick="map.window.closeClick()">
 		            <div>{{map.window.model.name}}</div>
@@ -211,8 +211,9 @@
 		</md-content>
 
 		<section layout="row" layout-sm="column" layout-align="center center" class="buttons">
-	      <md-button class="md-raised md-primary" ng-click="showMap = false">Calendar</md-button>
+	      <md-button class="md-raised md-primary" ng-click="showMap = false">Calendar View</md-button>
 	      <md-button class="md-raised md-primary" ng-click="showMap = true">Map View</md-button>
+	      <md-button class="md-raised" target="_blank" ng-href="https://www.google.com/calendar/embed?src={{calendarID}}">Google Calendar&nbsp;&nbsp;<i class="fa fa-external-link"></i></md-button>
 	    </section>
 
 		</section>
@@ -243,6 +244,7 @@
 			  var fb = new Firebase("https://blinding-torch-1320.firebaseio.com");
 			  var firebaseFavs = null;
 			  var calendarID = "";
+			  $scope.calendarID = "";
 
 				fb.onAuth(function(authData) {
 				  if (authData !== null) {
@@ -256,6 +258,7 @@
 					      calendarID: data
 					    });
 					    calendarID = data;
+					    $scope.calendarID = data;
 			 			firebaseFavs = fb.child("list").child(fb.getAuth().uid);
 
 
@@ -739,7 +742,6 @@
 				position:absolute;
 				width:100%;
 				height:100%;
-				overflow:hidden;
 				border:none;
 			}
 
