@@ -270,7 +270,12 @@
 						  		allFavs.push(events.val());
 						  	})
 						  });
-						  document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
+						  //document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
+
+						    var myIframe = document.getElementById('iframe');
+							myIframe.onload = function() {
+							    this.contentWindow.updateCalendarData(allFavs);
+							};
 						});
 					});
 				  } else {
@@ -501,8 +506,6 @@
 
 		        $scope.$watch("[details,date]", function(newValue, oldValue) {
 				    if (newValue[0] && newValue[1]) {
-				    	console.log(newValue[0]);
-
 				     	$scope.data.selectedScreen = 1;
 						$scope.events = [];
 						$scope.mapEvents = [];
