@@ -361,7 +361,7 @@
 
 			  				$.get("related/deleteEvent/"+item.calendarID+"/"+calendarID, function(){});
 
-			  				postRef.on("value", function(snapshot) {
+			  				postRef.once("value", function(snapshot) {
 								$scope.events.forEach(function(value){
 									value.data.forEach(function(v){
 										if (snapshot.val() && v.uid == snapshot.val().uid)
