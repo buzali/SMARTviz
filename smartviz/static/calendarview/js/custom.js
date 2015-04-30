@@ -34,7 +34,8 @@ function changeTofiData(tofi_json) {
 
 $(document).ready(function()
 {
-    updateCalendarData(parent.calendarhack);
+    if (parent.calendarhack)
+        updateCalendarData(parent.calendarhack);
     // Javascript for customizing default date to today
     //
     // var d = new Date();
