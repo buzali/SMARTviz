@@ -270,12 +270,8 @@
 						  		allFavs.push(events.val());
 						  	})
 						  });
-						  //document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
+						  document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
 
-						    var myIframe = document.getElementById('iframe');
-							myIframe.onload = function() {
-							    this.contentWindow.updateCalendarData(allFavs);
-							};
 						});
 					});
 				  } else {
