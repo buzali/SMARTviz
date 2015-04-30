@@ -508,8 +508,8 @@
 						$scope.mapEvents = [];
 						$scope.favorites = [];
 
-					    var lng = newValue[0].geometry.location.A;
-					    var lat = newValue[0].geometry.location.F;
+					    var lng = newValue[0].geometry.location.F;
+					    var lat = newValue[0].geometry.location.A;
 					    var date = '?date='+$scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
 
 						$scope.map.center = { latitude: lat, longitude: lng };
@@ -745,6 +745,9 @@
 				width:100%;
 				height:100%;
 				border:none;
+			}
+			input {
+				font-size: .7em;
 			}
 
 			input::-webkit-input-placeholder { color:transparent; }
