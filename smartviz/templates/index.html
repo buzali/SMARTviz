@@ -213,7 +213,7 @@
 		<section layout="row" layout-sm="column" layout-align="center center" class="buttons">
 	      <md-button class="md-raised md-primary" ng-click="showMap = false">Calendar View</md-button>
 	      <md-button class="md-raised md-primary" ng-click="showMap = true">Map View</md-button>
-	      <md-button class="md-raised" target="_blank" ng-href="https://www.google.com/calendar/ical/{{calendarID}}/public/basic.ics">Google Calendar&nbsp;&nbsp;<i class="fa fa-external-link"></i></md-button>
+	      <md-button class="md-raised" target="_blank" ng-href="https://www.google.com/calendar/ical/{{calendarID}}/public/basic.ics">Subscribe to Calendar(ICS)&nbsp;&nbsp;<i class="fa fa-external-link"></i></md-button>
 	    </section>
 
 		</section>
@@ -265,7 +265,7 @@
 
 
 						firebaseFavs.on("value", function(snapshot) {
-						  
+
 						  var allFavs = [];
 						  snapshot.forEach(function(d) {
 						  	d.forEach(function(events) {
@@ -375,7 +375,7 @@
 							}, function (errorObject) {
 							  console.log("The read failed: " + errorObject.code);
 							});
-							
+
 						}
 					} else {
 					  console.log("User is logged out");
@@ -636,7 +636,7 @@
 				            }
 				        });
 
-						
+
 					  	var date = $scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
 				        firebaseFavs.child(date).off("value");
 						firebaseFavs.child(date).on("value", function(snapshot) {
@@ -677,7 +677,7 @@
 
 				},true);
 
-				
+
 
 			})
 			.controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
