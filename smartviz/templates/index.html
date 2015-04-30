@@ -315,7 +315,8 @@
 			          .highlightAction(false)
 			          .position("top right");
 			    $mdToast.show(toast).then(function() {
-			      window.open("https://www.google.com/calendar/embed?src="+calendarID);
+
+			      window.open("https://www.google.com/calendar/ical/"+calendarID+"/public/basic.ics");
 			    });
 			  };
 
