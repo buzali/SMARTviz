@@ -501,13 +501,15 @@
 
 		        $scope.$watch("[details,date]", function(newValue, oldValue) {
 				    if (newValue[0] && newValue[1]) {
+				    	console.log(newValue[0]);
+
 				     	$scope.data.selectedScreen = 1;
 						$scope.events = [];
 						$scope.mapEvents = [];
 						$scope.favorites = [];
 
-					    var lng = newValue[0].geometry.location.D;
-					    var lat = newValue[0].geometry.location.k;
+					    var lng = newValue[0].geometry.location.A;
+					    var lat = newValue[0].geometry.location.F;
 					    var date = '?date='+$scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
 
 						$scope.map.center = { latitude: lat, longitude: lng };
