@@ -231,6 +231,8 @@
 
 
     	<script>
+    		var calendarhack = null;
+
     		Date.prototype.addHours= function(h){
 			    this.setHours(this.getHours()+h);
 			    return this;
@@ -271,7 +273,7 @@
 						  	})
 						  });
 						  document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
-
+						  calendarhack = allFavs;
 						});
 					});
 				  } else {
