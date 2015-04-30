@@ -272,8 +272,10 @@
 						  		allFavs.push(events.val());
 						  	})
 						  });
-						  document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
 						  calendarhack = allFavs;
+						  try {
+						  	document.getElementById('iframe').contentWindow.updateCalendarData(allFavs);
+						  } catch(e) {}
 						});
 					});
 				  } else {
@@ -635,10 +637,9 @@
 				        });
 
 						
-
 					  	var date = $scope.date.getFullYear()+"-"+($scope.date.getMonth()+1)+"-"+$scope.date.getDate();
+				        firebaseFavs.child(date).off("value");
 						firebaseFavs.child(date).on("value", function(snapshot) {
-						  
 						  $scope.favorites = [];
 						  snapshot.forEach(function(data) {
 						  	temp = data.val();

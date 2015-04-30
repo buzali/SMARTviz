@@ -57,11 +57,7 @@ $(document).ready(function()
             //defaultDate: default_date,
             editable: true,
             eventLimit: true, // allow "more" link when too many events
-            events: updated_json,
-            eventAfterAllRender: function(view) {
-                if (parent.calendarhack)
-                    updateCalendarData(parent.calendarhack);
-            }
+            events: updated_json
     });
 
     // Sample value for Tofi's JSON
@@ -102,5 +98,7 @@ $(document).ready(function()
         // when date is changed, get new events
         // Make sure to add events to calendar when user stars it.
     }
+    if (parent.calendarhack)
+        updateCalendarData(parent.calendarhack);
 });
 
