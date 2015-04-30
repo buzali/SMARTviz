@@ -145,6 +145,7 @@ class MeetupsEvent(Event):
         lat = obj['venue']['lat']
         lng = obj['venue']['lon']
         uid = obj['id']
+        duration = obj.get('duration')
         self.address = u"{0}, {1}".format(obj['venue']['address_1'],obj['venue']['city'])
         self.venue = obj['venue']['name']
         url = obj.get('event_url')
@@ -153,11 +154,20 @@ class MeetupsEvent(Event):
         # self.description = obj.get('description')
         dd = datetime.utcfromtimestamp(obj.get('time')/1000)
         if tz:
-            self.start = tz.fromutc(dd).isoformat()
+            start_date = tz.fromutc(dd)
+            self.start = start_date.isoformat()
+            if duration:
+                end_date = start_date + timedelta(milliseconds= duration)
+            else:
+                #assume 3 hr duration
+                end_date = start_date + timedelta(hours= 3)
+            self.end = end_date.isoformat()
         else:
             self.start = dd.isoformat()
+            self.end = ''
 
-        self.description = "{0} {1}".format(self.venue, dd.strftime('%I:%M%p').lower())
+
+        self.description = "{0} {1} - {2}".format(self.venue, start_date.strftime('%I:%M%p').lower(), end_date.strftime('%I:%M%p'))
 
         self.type = 'Meetups'
 
@@ -187,7 +197,7 @@ class MeetupsEventFetcher(object):
         'lon':lng,
         'radius': '8',
         'time':'{0},{1}'.format(repr(day_ms),repr(next_ms)),
-        'only':'id,event_url,name,photo_url,distance,description,venue,time,why,simple_html_description',
+        'only':'id,event_url,name,photo_url,distance,description,duration,venue,time,why,simple_html_description',
         }
         meetups = meet._fetch('/2/open_events', **data)
 
