@@ -8,7 +8,7 @@ facebook-sdk==0.4.0
 foursquare==2015.2.1
 google-api-python-client==1.4.0
 gunicorn==19.2.1
-httplib2==0.9
+httplib2==0.18.0
 Jinja2==2.7.3
 MarkupSafe==0.23
 oauth2client==1.4.7
