@@ -30,4 +30,4 @@ Sphinx==1.2.3
 static3==0.5.1
 twython==3.2.0
 uritemplate==0.6
-urllib3==1.10.2
+urllib3==1.26.5
